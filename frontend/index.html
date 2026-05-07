@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="毛际可 — 10年前端工程师，专注 Vue 生态、移动端与企业级系统开发" />
+  <title>毛际可 · 前端工程师</title>
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/ai-chat.css" />
+</head>
+<body>
+  <header class="site-header" id="siteHeader">
+    <nav class="nav container" aria-label="主导航">
+      <a class="nav__brand" href="#hero">毛际可</a>
+      <button class="nav__toggle" id="navToggle" aria-label="切换菜单" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__menu" id="navMenu">
+        <li><a href="#about">关于</a></li>
+        <li><a href="#skills">技能</a></li>
+        <li><a href="#experience">经历</a></li>
+        <li><a href="#projects">项目</a></li>
+        <li><a href="#contact">联系</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="hero" class="hero">
+      <div class="container hero__inner">
+        <p class="hero__eyebrow">你好，我是</p>
+        <h1 class="hero__title" data-text="毛际可">毛际可</h1>
+        <p class="hero__subtitle">高级前端工程师 · 10年经验</p>
+        <p class="hero__desc">专注 Vue 生态与移动端开发，具备从 H5 商城到企业级 ERP 的全栈交付能力，可独立开发微信小程序。</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#projects">查看项目</a>
+          <a class="btn btn--ghost" href="#contact">联系我</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="container">
+        <header class="section__head">
+          <span class="section__num">01</span>
+          <h2 class="section__title">关于我</h2>
+        </header>
+        <div class="about">
+          <div class="about__text">
+            <p>10年前端开发经验，33岁，深耕 Vue 2/3 生态，熟悉从移动端 H5 到 PC 端企业级后台的完整研发链路。</p>
+            <p>参与并主导过仓储管理系统、集团 ERP、移动端商城等多个中大型项目，具备 BFF 层（NestJS）开发经验。能独立完成微信原生小程序、mpvue、uni-app 项目的全流程开发与上线。</p>
+          </div>
+          <aside class="about__meta">
+            <dl>
+              <dt>年龄</dt><dd>33岁</dd>
+              <dt>经验</dt><dd>10年前端</dd>
+              <dt>小程序</dt><dd>微信原生 / mpvue / uni-app</dd>
+              <dt>状态</dt><dd>开放机会</dd>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="section section--alt">
+      <div class="container">
+        <header class="section__head">
+          <span class="section__num">02</span>
+          <h2 class="section__title">技能栈</h2>
+        </header>
+        <div class="skills">
+          <article class="skill-card">
+            <h3>前端框架</h3>
+            <ul>
+              <li>Vue 2 / Vue 3</li>
+              <li>TypeScript</li>
+              <li>Vite / Vue CLI</li>
+              <li>Pinia / Vuex</li>
+              <li>Vue Router</li>
+            </ul>
+          </article>
+          <article class="skill-card">
+            <h3>移动端 & 小程序</h3>
+            <ul>
+              <li>Vant / lib-flexible</li>
+              <li>微信原生小程序</li>
+              <li>mpvue</li>
+              <li>uni-app</li>
+              <li>微信 JS-SDK</li>
+            </ul>
+          </article>
+          <article class="skill-card">
+            <h3>UI 组件库</h3>
+            <ul>
+              <li>Element UI / Element Plus</li>
+              <li>Vant</li>
+              <li>ECharts</li>
+              <li>html2canvas</li>
+              <li>vuedraggable</li>
+            </ul>
+          </article>
+          <article class="skill-card">
+            <h3>后端 & 工程化</h3>
+            <ul>
+              <li>NestJS / Node.js</li>
+              <li>Axios / RESTful API</li>
+              <li>Git / ESLint / Prettier</li>
+              <li>Webpack / Vite</li>
+              <li>Vercel / Nginx 部署</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" class="section">
+      <div class="container">
+        <header class="section__head">
+          <span class="section__num">03</span>
+          <h2 class="section__title">工作经历</h2>
+        </header>
+        <ol class="timeline">
+          <li class="timeline__item">
+            <div class="timeline__meta">
+              <time>2022 — 至今</time>
+              <span class="timeline__company">某科技公司</span>
+            </div>
+            <div class="timeline__body">
+              <h3>高级前端工程师</h3>
+              <ul>
+                <li>主导仓储管理系统（jss-storage-admin）前端架构，基于 Vue2 + Element UI 实现库存、销售、采购、售后等核心模块。</li>
+                <li>独立开发 BFF 层（NestJS + Fastify），封装全局响应拦截、鉴权守卫、异常过滤器，解决大数字精度丢失问题。</li>
+                <li>负责集团 ERP 系统（conglomerates-erp）前端开发，基于 Vue3 + TypeScript + Element Plus，覆盖财务、采购、供应商、仓储、订单等 15+ 业务模块。</li>
+              </ul>
+            </div>
+          </li>
+          <li class="timeline__item">
+            <div class="timeline__meta">
+              <time>2019 — 2022</time>
+              <span class="timeline__company">某电商公司</span>
+            </div>
+            <div class="timeline__body">
+              <h3>前端工程师</h3>
+              <ul>
+                <li>负责移动端商城（wj-mall-h5）开发，基于 Vue2 + Vant，实现商品浏览、购物车、订单支付、会员中心、推广海报等完整电商链路。</li>
+                <li>集成微信 JS-SDK，实现微信支付、分享、定位等能力。</li>
+                <li>独立开发微信小程序，覆盖商品展示、订单管理、用户中心等核心功能。</li>
+              </ul>
+            </div>
+          </li>
+          <li class="timeline__item">
+            <div class="timeline__meta">
+              <time>2015 — 2019</time>
+              <span class="timeline__company">早期经历</span>
+            </div>
+            <div class="timeline__body">
+              <h3>前端开发工程师</h3>
+              <ul>
+                <li>参与多个 PC 端管理后台与移动端 H5 项目开发，积累扎实的 HTML/CSS/JS 基础。</li>
+                <li>逐步掌握 Vue 生态，从 Vue 2 迁移至 Vue 3，持续跟进前端技术演进。</li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="projects" class="section section--alt">
+      <div class="container">
+        <header class="section__head">
+          <span class="section__num">04</span>
+          <h2 class="section__title">精选项目</h2>
+        </header>
+        <div class="projects">
+          <article class="project-card">
+            <h3>集团 ERP 系统</h3>
+            <p class="project-card__desc">面向集团多业务线的企业资源管理平台，覆盖财务应收、采购保税仓、供应商管理、订单履约、仓储调拨等 15+ 模块，支持多角色权限体系。</p>
+            <ul class="project-card__tags"><li>Vue 3</li><li>TypeScript</li><li>Element Plus</li><li>Vite</li><li>Pinia</li></ul>
+          </article>
+          <article class="project-card">
+            <h3>仓储管理系统 + BFF</h3>
+            <p class="project-card__desc">仓储全流程管理系统，含入库、出库、库存盘点、销售、采购、售后等模块。独立开发 NestJS BFF 层，统一鉴权、日志、异常处理与大数字精度问题。</p>
+            <ul class="project-card__tags"><li>Vue 2</li><li>Element UI</li><li>NestJS</li><li>Fastify</li><li>TypeScript</li></ul>
+          </article>
+          <article class="project-card">
+            <h3>移动端电商商城</h3>
+            <p class="project-card__desc">完整移动端电商 H5，涵盖商品列表、购物车、多种支付方式、订单追踪、会员中心、推广海报生成、微信分享等功能，接入微信 JS-SDK。</p>
+            <ul class="project-card__tags"><li>Vue 2</li><li>Vant</li><li>Vuex</li><li>微信 JS-SDK</li><li>ECharts</li></ul>
+          </article>
+          <article class="project-card">
+            <h3>微信小程序（独立开发）</h3>
+            <p class="project-card__desc">独立完成多款微信小程序从立项到上线的全流程，涵盖商品展示、订单管理、用户中心等场景，熟练使用微信原生、mpvue、uni-app 三种方案。</p>
+            <ul class="project-card__tags"><li>微信原生</li><li>mpvue</li><li>uni-app</li><li>小程序云开发</li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container contact">
+        <header class="section__head">
+          <span class="section__num">05</span>
+          <h2 class="section__title">联系我</h2>
+        </header>
+        <p class="contact__lead">如果你有合作机会或想进一步了解我的经历，欢迎随时联系。</p>
+        <ul class="contact__list">
+          <li><a href="mailto:[your-email]">邮箱联系</a></li>
+          <li><a href="#" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+        <a class="btn btn--primary" href="mailto:[your-email]">发送邮件</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> 毛际可. 前端工程师.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+  <script src="js/hero-canvas.js" defer></script>
+
+  <!-- AI Chat Widget -->
+  <button class="ai-chat-btn" id="aiChatBtn" aria-label="打开 AI 助手">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  </button>
+
+  <div class="ai-chat-panel" id="aiChatPanel" role="dialog" aria-label="AI 助手">
+    <div class="ai-chat__header">
+      <div class="ai-chat__header-info">
+        <div class="ai-chat__avatar">AI</div>
+        <div>
+          <div class="ai-chat__title">AI 助手</div>
+          <div class="ai-chat__subtitle">了解毛际可的经历与技能</div>
+        </div>
+      </div>
+      <button class="ai-chat__close" id="aiChatClose" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="ai-chat__messages" id="aiChatMessages"></div>
+    <div class="ai-chat__error" id="aiChatError"></div>
+    <div class="ai-chat__footer">
+      <textarea class="ai-chat__input" id="aiChatInput" rows="1" placeholder="输入问题，按 Enter 发送…" aria-label="输入消息"></textarea>
+      <button class="ai-chat__send" id="aiChatSend" aria-label="发送">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="js/ai-chat.js" defer></script>
+</body>
+</html>
