@@ -27,7 +27,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
       <a class="nav__brand" href="#hero">毛际可</a>
       <button
         class="nav__toggle"
-        :aria-expanded="String(menuOpen)"
+        :aria-expanded="menuOpen"
         aria-label="切换菜单"
         @click="menuOpen = !menuOpen"
       >

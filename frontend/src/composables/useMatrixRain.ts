@@ -97,7 +97,8 @@ class Typewriter {
   private readonly cursor: HTMLSpanElement
   private readonly textNode: Text
 
-  constructor(private readonly el: HTMLElement, private readonly lines: string[]) {
+  constructor(_el: HTMLElement, private readonly lines: string[]) {
+    const el = _el
     this.cursor = Object.assign(document.createElement('span'), { className: 'tw-cursor', textContent: '█' })
     this.textNode = document.createTextNode('')
     el.textContent = ''
