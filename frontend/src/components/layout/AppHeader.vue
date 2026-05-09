@@ -24,7 +24,9 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 <template>
   <header class="site-header" :class="{ 'is-scrolled': isScrolled }" id="siteHeader">
     <nav class="nav container" aria-label="主导航">
-      <a class="nav__brand" href="#hero">毛际可</a>
+      <a class="nav__brand" href="#hero">
+        <img src="/logo.svg" alt="毛际可" class="nav__logo" />
+      </a>
       <button
         class="nav__toggle"
         :aria-expanded="menuOpen"
@@ -43,3 +45,11 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
     </nav>
   </header>
 </template>
+
+<style scoped>
+.nav__logo {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+</style>

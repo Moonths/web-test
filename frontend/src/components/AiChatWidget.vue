@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { useChat } from '@/composables/useChat'
@@ -11,6 +11,14 @@ const messagesEl = ref<HTMLElement>()
 const initialized = ref(false)
 
 const { messages, isStreaming, error, init, send } = useChat()
+
+const suggestions = ['介绍一下你的技术栈', '有哪些项目经历？', '擅长解决什么问题？']
+const hasUserMessages = computed(() => messages.value.some(m => m.role === 'user'))
+
+async function sendSuggestion(text: string) {
+  inputText.value = text
+  await handleSend()
+}
 
 async function toggleOpen() {
   isOpen.value = !isOpen.value
@@ -57,9 +65,10 @@ function renderMarkdown(text: string): string {
 
 <template>
   <button class="ai-chat-btn" aria-label="打开 AI 助手" @click="toggleOpen">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    <svg viewBox="0 0 16 16" fill="currentColor">
+      <path d="M8 1 9.3 6.7 15 8 9.3 9.3 8 15 6.7 9.3 1 8 6.7 6.7Z"/>
     </svg>
+    <span class="ai-chat-btn__label">问问 AI</span>
   </button>
 
   <div class="ai-chat-panel" :class="{ 'is-open': isOpen }" role="dialog" aria-label="AI 助手">
@@ -79,16 +88,17 @@ function renderMarkdown(text: string): string {
     </div>
 
     <div class="ai-chat__messages" ref="messagesEl">
-      <div
-        v-for="(msg, i) in messages"
-        :key="i"
-        class="chat-msg"
-        :class="msg.role === 'user' ? 'chat-msg--user' : 'chat-msg--bot'"
-      >
-        <div class="chat-msg__icon">{{ msg.role === 'bot' ? 'AI' : '我' }}</div>
+      <template v-for="(msg, i) in messages" :key="i">
+        <div
+          v-if="msg.role !== 'bot' || msg.content"
+          class="chat-msg"
+          :class="msg.role === 'user' ? 'chat-msg--user' : 'chat-msg--bot'"
+        >
+          <div class="chat-msg__icon">{{ msg.role === 'bot' ? 'AI' : '我' }}</div>
           <div v-if="msg.role === 'bot'" class="chat-msg__bubble chat-msg__bubble--md" v-html="renderMarkdown(msg.content)"></div>
           <div v-else class="chat-msg__bubble">{{ msg.content }}</div>
-      </div>
+        </div>
+      </template>
       <div v-if="isStreaming && messages[messages.length - 1]?.role === 'bot' && !messages[messages.length - 1]?.content" class="chat-msg chat-msg--bot chat-msg--typing">
         <div class="chat-msg__icon">AI</div>
         <div class="chat-msg__bubble">
@@ -98,6 +108,15 @@ function renderMarkdown(text: string): string {
     </div>
 
     <div v-if="error" class="ai-chat__error">{{ error }}</div>
+
+    <div v-if="!hasUserMessages" class="ai-chat__suggestions">
+      <button
+        v-for="q in suggestions"
+        :key="q"
+        class="ai-chat__suggestion-chip"
+        @click="sendSuggestion(q)"
+      >{{ q }}</button>
+    </div>
 
     <div class="ai-chat__footer">
       <textarea

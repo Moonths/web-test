@@ -41,6 +41,9 @@
   .hero__actions { flex-direction: column; align-items: stretch; }
   .hero__actions .btn { text-align: center; }
 
+  .section__num { font-size: clamp(1.75rem, 8vw, 2.5rem); }
+  .section__title { font-size: clamp(1.5rem, 5vw, 2rem); }
+
   .skills { grid-template-columns: 1fr 1fr; }
   .projects { grid-template-columns: 1fr; }
 
@@ -61,4 +64,5 @@
   }
   .skills { grid-template-columns: 1fr; }
   .hero__desc { font-size: var(--fs-base); }
+  .section__num { font-size: 1.5rem; }
 }
