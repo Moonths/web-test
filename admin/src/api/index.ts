@@ -17,6 +17,24 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>
 }
 
+export interface ChatLog {
+  id: number; created_at: string; ip: string; session_id: string; question: string
+}
+export interface Interest {
+  id: number; created_at: string; name: string; company: string; position: string
+  email: string; phone: string; jd_url: string; message: string
+}
+export interface Slot {
+  id: number; date: string; start_time: string; end_time: string; note: string; is_booked: number
+}
+export interface Booking {
+  id: number; created_at: string; name: string; company: string; email: string; phone: string
+  date: string; start_time: string; end_time: string
+}
+export interface SlotCreate {
+  date: string; start_time: string; end_time: string; note?: string
+}
+
 export const api = {
   login: (username: string, password: string) =>
     request<{ token: string }>('/login', {
@@ -35,6 +53,17 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify({ content }),
     }),
+
+  getLogs: () => request<ChatLog[]>('/admin/logs'),
+  getInterests: () => request<Interest[]>('/admin/interests'),
+  getSlots: () => request<Slot[]>('/admin/slots'),
+  createSlot: (data: SlotCreate) => request<Slot>('/admin/slots', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  deleteSlot: (id: number) => request<void>(`/admin/slots/${id}`, { method: 'DELETE' }),
+  generateSlots: () => request<{ created: number }>('/admin/slots/generate', { method: 'POST' }),
+  getBookings: () => request<Booking[]>('/admin/bookings'),
 }
 
 export async function* chatStream(

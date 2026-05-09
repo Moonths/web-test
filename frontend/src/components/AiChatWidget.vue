@@ -3,6 +3,9 @@ import { ref, computed, nextTick } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { useChat } from '@/composables/useChat'
+import CtaCard from './CtaCard.vue'
+import InterestForm from './InterestForm.vue'
+import BookingForm from './BookingForm.vue'
 
 const isOpen = ref(false)
 const inputText = ref('')
@@ -14,6 +17,11 @@ const { messages, isStreaming, error, init, send } = useChat()
 
 const suggestions = ['介绍一下你的技术栈', '有哪些项目经历？', '擅长解决什么问题？']
 const hasUserMessages = computed(() => messages.value.some(m => m.role === 'user'))
+const userMessageCount = computed(() => messages.value.filter(m => m.role === 'user').length)
+const showCta = computed(() => userMessageCount.value >= 2)
+const ctaSubmitted = ref(false)
+const showInterestForm = ref(false)
+const showBookingForm = ref(false)
 
 async function sendSuggestion(text: string) {
   inputText.value = text
@@ -105,6 +113,22 @@ function renderMarkdown(text: string): string {
           <span class="typing-dot" /><span class="typing-dot" /><span class="typing-dot" />
         </div>
       </div>
+
+      <CtaCard
+        v-if="showCta && !ctaSubmitted"
+        @interest="showInterestForm = true"
+        @book="showBookingForm = true"
+      />
+      <InterestForm
+        v-if="showInterestForm"
+        @close="showInterestForm = false"
+        @submitted="ctaSubmitted = true; showInterestForm = false"
+      />
+      <BookingForm
+        v-if="showBookingForm"
+        @close="showBookingForm = false"
+        @submitted="ctaSubmitted = true; showBookingForm = false"
+      />
     </div>
 
     <div v-if="error" class="ai-chat__error">{{ error }}</div>

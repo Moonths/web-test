@@ -13,6 +13,9 @@ const router = createRouter({
       component: () => import('@/views/EditorView.vue'),
       meta: { requiresAuth: true },
     },
+    { path: '/logs',      component: () => import('@/views/LogsView.vue'),      meta: { requiresAuth: true } },
+    { path: '/interests', component: () => import('@/views/InterestsView.vue'), meta: { requiresAuth: true } },
+    { path: '/slots',     component: () => import('@/views/SlotsView.vue'),     meta: { requiresAuth: true } },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })

@@ -106,6 +106,12 @@ function handleLogout() {
   <div class="admin-layout">
     <header class="admin-header">
       <span class="admin-title">简历管理后台</span>
+      <nav class="admin-nav">
+        <router-link to="/" class="nav-link">知识库</router-link>
+        <router-link to="/logs" class="nav-link">聊天记录</router-link>
+        <router-link to="/interests" class="nav-link">留资</router-link>
+        <router-link to="/slots" class="nav-link">时间管理</router-link>
+      </nav>
       <div class="admin-actions">
         <el-button type="primary" :loading="saving" @click="handleSave">保存知识库</el-button>
         <el-button @click="handleLogout">退出登录</el-button>
@@ -219,4 +225,11 @@ function handleLogout() {
   background: #fff;
   flex-shrink: 0;
 }
+.admin-nav { display: flex; gap: 4px; }
+.nav-link {
+  padding: 6px 14px; border-radius: 6px; font-size: 14px;
+  color: #606266; text-decoration: none; transition: all 0.15s;
+}
+.nav-link:hover { background: #f0f2f5; color: #303133; }
+.nav-link.router-link-active { background: #ecf5ff; color: #409eff; font-weight: 500; }
 </style>
