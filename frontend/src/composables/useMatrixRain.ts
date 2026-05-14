@@ -57,7 +57,7 @@ class MatrixRain {
 
   private _tick() {
     const { ctx, canvas, cols, fontSize } = this
-    const bg = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim() || '#fff'
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim() || '#e8ecef'
     ctx.fillStyle = bg
     ctx.globalAlpha = 0.18
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -68,9 +68,9 @@ class MatrixRain {
       const col = cols[i]
       const x = i * fontSize
       const y = col.y * fontSize
-      ctx.fillStyle = dark ? '#a5f3fc' : '#4f46e5'; ctx.globalAlpha = 0.9
+      ctx.fillStyle = dark ? '#2f81f7' : '#0969da'; ctx.globalAlpha = 0.9
       ctx.fillText(randomChar(), x, y)
-      ctx.fillStyle = dark ? '#22d3ee' : '#818cf8'; ctx.globalAlpha = 0.35
+      ctx.fillStyle = dark ? '#79c0ff' : '#54aeff'; ctx.globalAlpha = 0.32
       ctx.fillText(randomChar(), x, y - fontSize)
       ctx.globalAlpha = 1
       col.y += col.speed
@@ -98,12 +98,11 @@ class Typewriter {
   private readonly textNode: Text
 
   constructor(_el: HTMLElement, private readonly lines: string[]) {
-    const el = _el
     this.cursor = Object.assign(document.createElement('span'), { className: 'tw-cursor', textContent: '█' })
     this.textNode = document.createTextNode('')
-    el.textContent = ''
-    el.appendChild(this.textNode)
-    el.appendChild(this.cursor)
+    _el.textContent = ''
+    _el.appendChild(this.textNode)
+    _el.appendChild(this.cursor)
   }
 
   start() { this._tick() }
@@ -142,10 +141,6 @@ export function useMatrixRain(heroRef: Ref<HTMLElement | null>, subtitleRef: Ref
     const canvas = Object.assign(document.createElement('canvas'), { id: 'hero-matrix' })
     canvas.setAttribute('aria-hidden', 'true')
     hero.insertBefore(canvas, hero.firstChild)
-
-    const scanline = Object.assign(document.createElement('div'), { id: 'hero-scanline' })
-    scanline.setAttribute('aria-hidden', 'true')
-    hero.appendChild(scanline)
 
     rain = new MatrixRain(canvas)
     rain.start()

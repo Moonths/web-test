@@ -14,22 +14,22 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  box-shadow: 0 4px 24px rgba(79, 70, 229, 0.35), var(--shadow-md);
+  box-shadow: 0 4px 24px rgba(9, 105, 218, 0.35), var(--shadow-md);
   transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease), background var(--dur-fast) var(--ease);
   animation: ai-btn-pulse 1.8s ease-out 2s 3;
 }
 .ai-chat-btn:hover {
   background: var(--color-accent-hover);
   transform: scale(1.04) translateY(-1px);
-  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.45), var(--shadow-lg);
+  box-shadow: 0 8px 32px rgba(9, 105, 218, 0.45), var(--shadow-lg);
 }
 .ai-chat-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 .ai-chat-btn__label { font-size: var(--fs-sm); font-weight: 600; letter-spacing: 0.01em; }
 
 @keyframes ai-btn-pulse {
-  0%   { box-shadow: 0 4px 24px rgba(79,70,229,0.35), 0 0 0 0 rgba(79,70,229,0.45); }
-  70%  { box-shadow: 0 4px 24px rgba(79,70,229,0.35), 0 0 0 16px rgba(79,70,229,0); }
-  100% { box-shadow: 0 4px 24px rgba(79,70,229,0.35), 0 0 0 0 rgba(79,70,229,0); }
+  0%   { box-shadow: 0 4px 24px rgba(9,105,218,0.35), 0 0 0 0 rgba(9,105,218,0.45); }
+  70%  { box-shadow: 0 4px 24px rgba(9,105,218,0.35), 0 0 0 16px rgba(9,105,218,0); }
+  100% { box-shadow: 0 4px 24px rgba(9,105,218,0.35), 0 0 0 0 rgba(9,105,218,0); }
 }
 
 .ai-chat-panel {
@@ -247,16 +247,16 @@
 
 @media (prefers-color-scheme: dark) {
   .ai-chat-btn {
-    box-shadow: 0 4px 24px rgba(129, 140, 248, 0.3), var(--shadow-md);
+    box-shadow: 0 4px 24px rgba(47, 129, 247, 0.3), var(--shadow-md);
     animation: ai-btn-pulse-dark 1.8s ease-out 2s 3;
   }
   .ai-chat-btn:hover {
-    box-shadow: 0 8px 32px rgba(129, 140, 248, 0.4), var(--shadow-lg);
+    box-shadow: 0 8px 32px rgba(47, 129, 247, 0.4), var(--shadow-lg);
   }
   @keyframes ai-btn-pulse-dark {
-    0%   { box-shadow: 0 4px 24px rgba(129,140,248,0.3), 0 0 0 0 rgba(129,140,248,0.4); }
-    70%  { box-shadow: 0 4px 24px rgba(129,140,248,0.3), 0 0 0 16px rgba(129,140,248,0); }
-    100% { box-shadow: 0 4px 24px rgba(129,140,248,0.3), 0 0 0 0 rgba(129,140,248,0); }
+    0%   { box-shadow: 0 4px 24px rgba(47,129,247,0.3), 0 0 0 0 rgba(47,129,247,0.4); }
+    70%  { box-shadow: 0 4px 24px rgba(47,129,247,0.3), 0 0 0 16px rgba(47,129,247,0); }
+    100% { box-shadow: 0 4px 24px rgba(47,129,247,0.3), 0 0 0 0 rgba(47,129,247,0); }
   }
 }
 

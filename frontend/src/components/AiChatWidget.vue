@@ -96,7 +96,7 @@ function renderMarkdown(text: string): string {
     </div>
 
     <div class="ai-chat__messages" ref="messagesEl">
-      <template v-for="(msg, i) in messages" :key="i">
+      <template v-for="(msg, _i) in messages" :key="_i">
         <div
           v-if="msg.role !== 'bot' || msg.content"
           class="chat-msg"
