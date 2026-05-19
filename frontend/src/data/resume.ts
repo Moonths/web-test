@@ -41,7 +41,7 @@ export const experience: TimelineItem[] = [
     company: '挖酒网',
     role: '前端负责人',
     bullets: [
-      '管理大前端部门，主导网页、小程序、管理系统研发与迭代，协调跨部门资源，制定客户端重构计划与新技术推广。',
+      '管理大前端部门，主导网页、小程序、管理系统、APP的研发与迭代，协调跨部门资源，制定客户端重构计划与新技术推广。',
       '搭建前端工程化体系：TypeScript + ESLint/Prettier/Stylelint + Husky/commitlint + Vite 打包优化，提升代码规范与可维护性。',
       '主导集团 ERP2.0（Vue3 + Element Plus）开发，覆盖客户、订单、采购、仓储、财务等核心模块，集成 AI 代理对话入口。',
       '独立开发仓储管理 BFF（NestJS），统一鉴权透传、全局异常过滤、XML 中间件，通过 RxJS 封装多下游服务调用。',
@@ -62,7 +62,7 @@ export const experience: TimelineItem[] = [
 export const projects: Project[] = [
   {
     title: '集团 ERP2.0 管理平台',
-    desc: '集团化 ERP 管理后台，覆盖客户、产品、订单、采购、仓储、财务等核心模块，集成 AI 代理对话入口。搭建工程架构（请求拦截、动态路由权限、Pinia 持久化），集成阿里云 OSS、PDF/条码、暗黑模式。',
+    desc: '集团化 ERP 管理后台，覆盖客户、产品、订单、采购、仓储、财务等核心模块，集成 AI 代理对话入口。搭建工程架构（动态路由权限、动态表格、流式下载、链式层级、pdf单据生成、批量导入优化），集成阿里云 OSS。',
     tags: ['Vue 3', 'TypeScript', 'Element Plus', 'Vite', 'Pinia'],
   },
   {
@@ -73,7 +73,7 @@ export const projects: Project[] = [
   {
     title: '仓储管理系统 + BFF',
     desc: '仓储全流程管理后台，覆盖入出库、盘点、销售、采购、售后等模块。独立开发 NestJS BFF 层，统一鉴权透传、全局异常过滤、XML 中间件，通过 RxJS 封装下游调用。',
-    tags: ['Vue 2', 'Element UI', 'NestJS', 'TypeScript', 'RxJS'],
+    tags: ['Vue 3', 'Element UI', 'NestJS', 'TypeScript', 'RxJS'],
   },
   {
     title: '微信小程序 B2B 电商平台',
