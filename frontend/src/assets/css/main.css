@@ -383,6 +383,21 @@ img { max-width: 100%; display: block; }
   text-align: center;
 }
 
+.icp-beian {
+  margin-top: var(--space-2);
+  font-size: var(--fs-xs, 0.75rem);
+}
+
+.icp-beian a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.icp-beian a:hover {
+  color: var(--color-accent);
+}
+
 /* Typewriter cursor */
 .tw-cursor {
   display: inline-block;
