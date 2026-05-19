@@ -266,6 +266,7 @@
     left: var(--space-4);
     width: auto;
     bottom: calc(var(--space-7) + 60px);
+    max-height: min(560px, 70dvh);
   }
   .ai-chat-btn { right: var(--space-4); bottom: var(--space-6); height: 44px; padding: 0 var(--space-4) 0 var(--space-3); }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { useChat } from '@/composables/useChat'
@@ -12,6 +12,7 @@ const inputText = ref('')
 const inputEl = ref<HTMLTextAreaElement>()
 const messagesEl = ref<HTMLElement>()
 const initialized = ref(false)
+const panelBottom = ref('')
 
 const { messages, isStreaming, error, init, send } = useChat()
 
@@ -22,6 +23,34 @@ const showCta = computed(() => userMessageCount.value >= 2)
 const ctaSubmitted = ref(false)
 const showInterestForm = ref(false)
 const showBookingForm = ref(false)
+
+function updatePanelPosition() {
+  const vv = window.visualViewport
+  if (!vv) return
+  // 键盘弹起时 visualViewport.height < window.innerHeight
+  // offsetTop 是 viewport 相对于 layout viewport 的偏移
+  const keyboardHeight = window.innerHeight - vv.height - vv.offsetTop
+  if (keyboardHeight > 50) {
+    // 键盘已弹出，贴在键盘上方留 8px 间距
+    panelBottom.value = `${keyboardHeight + 8}px`
+  } else {
+    panelBottom.value = ''
+  }
+}
+
+function resetPanelPosition() {
+  panelBottom.value = ''
+}
+
+onMounted(() => {
+  window.visualViewport?.addEventListener('resize', updatePanelPosition)
+  window.visualViewport?.addEventListener('scroll', updatePanelPosition)
+})
+
+onUnmounted(() => {
+  window.visualViewport?.removeEventListener('resize', updatePanelPosition)
+  window.visualViewport?.removeEventListener('scroll', updatePanelPosition)
+})
 
 async function sendSuggestion(text: string) {
   inputText.value = text
@@ -38,6 +67,8 @@ async function toggleOpen() {
       await init()
       scrollBottom()
     }
+  } else {
+    resetPanelPosition()
   }
 }
 
@@ -79,7 +110,7 @@ function renderMarkdown(text: string): string {
     <span class="ai-chat-btn__label">问问 AI</span>
   </button>
 
-  <div class="ai-chat-panel" :class="{ 'is-open': isOpen }" role="dialog" aria-label="AI 助手">
+  <div class="ai-chat-panel" :class="{ 'is-open': isOpen }" :style="panelBottom ? { bottom: panelBottom } : {}" role="dialog" aria-label="AI 助手">
     <div class="ai-chat__header">
       <div class="ai-chat__header-info">
         <div class="ai-chat__avatar">AI</div>
