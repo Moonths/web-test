@@ -13,6 +13,23 @@ const inputEl = ref<HTMLTextAreaElement>()
 const messagesEl = ref<HTMLElement>()
 const initialized = ref(false)
 const panelBottom = ref('')
+let savedScrollY = 0
+
+function lockScroll() {
+  savedScrollY = window.scrollY
+  document.body.style.overflow = 'hidden'
+  document.body.style.position = 'fixed'
+  document.body.style.top = `-${savedScrollY}px`
+  document.body.style.width = '100%'
+}
+
+function unlockScroll() {
+  document.body.style.overflow = ''
+  document.body.style.position = ''
+  document.body.style.top = ''
+  document.body.style.width = ''
+  window.scrollTo(0, savedScrollY)
+}
 
 const { messages, isStreaming, error, init, send } = useChat()
 
@@ -60,6 +77,7 @@ async function sendSuggestion(text: string) {
 async function toggleOpen() {
   isOpen.value = !isOpen.value
   if (isOpen.value) {
+    lockScroll()
     await nextTick()
     inputEl.value?.focus()
     if (!initialized.value) {
@@ -68,6 +86,7 @@ async function toggleOpen() {
       scrollBottom()
     }
   } else {
+    unlockScroll()
     resetPanelPosition()
   }
 }
@@ -119,7 +138,7 @@ function renderMarkdown(text: string): string {
           <div class="ai-chat__subtitle">了解毛际可的经历与技能</div>
         </div>
       </div>
-      <button class="ai-chat__close" aria-label="关闭" @click="isOpen = false">
+      <button class="ai-chat__close" aria-label="关闭" @click="toggleOpen">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
