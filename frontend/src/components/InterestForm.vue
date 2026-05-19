@@ -25,7 +25,7 @@ async function submit() {
     if (!res.ok) throw new Error('提交失败')
     emit('submitted')
   } catch (e: any) {
-    error.value = e.message || '提交失败，请重试'
+    error.value = e.message || '提交失败，请重试。'
   } finally {
     loading.value = false
   }
