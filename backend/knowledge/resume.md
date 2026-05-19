@@ -35,7 +35,7 @@
 
 ## 前端
 
-- Vue3, TypeScript,uniapp,next.js,javascript原生,jquery
+- Vue3, TypeScript,uniapp,nest.js,javascript原生,jquery
 - Vite, Webpack
 - CSS3, Tailwind CSS
 

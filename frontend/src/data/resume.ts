@@ -18,8 +18,8 @@ export interface Project {
 
 export const skills: SkillCategory[] = [
   {
-    title: '前端框架',
-    items: ['Vue 3 / Vue 2', 'TypeScript', 'Vite / Webpack', 'Pinia / Vuex', 'Vue Router', 'Next.js'],
+    title: '前端框架与技术',
+    items: ['Vue 3 / Vue 2', 'Nuxt.js', 'TypeScript', 'Vite / Webpack', 'Pinia / Vuex'],
   },
   {
     title: '移动端 & 小程序',
@@ -31,7 +31,7 @@ export const skills: SkillCategory[] = [
   },
   {
     title: '工程化 & 工具',
-    items: ['Git / Docker / Linux', 'ESLint / Prettier / Stylelint', 'Husky / commitlint', 'Element Plus / Element UI', 'Axios 拦截器'],
+    items: ['Git / Docker / Linux', 'ESLint / Prettier / Stylelint', 'Husky / commitlint', 'Element Plus / Ant Design', 'Axios', 'npm / pnpm', 'nvm'],
   },
 ]
 
