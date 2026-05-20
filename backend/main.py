@@ -90,6 +90,18 @@ CREATE TABLE IF NOT EXISTS bookings (
     email      TEXT NOT NULL,
     phone      TEXT
 );
+CREATE TABLE IF NOT EXISTS direct_bookings (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    date       TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    end_time   TEXT NOT NULL,
+    name       TEXT NOT NULL,
+    company    TEXT NOT NULL,
+    email      TEXT NOT NULL,
+    phone      TEXT,
+    UNIQUE(date, start_time)
+);
 """
 
 
@@ -443,6 +455,64 @@ async def delete_slot(slot_id: int, _: str = Depends(verify_token)):
             raise HTTPException(status_code=409, detail="Cannot delete a booked slot")
         db.execute("DELETE FROM time_slots WHERE id=?", (slot_id,))
     return {"message": "deleted"}
+
+
+@app.get("/bookings/taken")
+async def get_taken_slots():
+    """返回未来7个工作日内已被预约的 date+start_time 列表，供前端置灰用"""
+    today = datetime.now().date()
+    workdays: list = []
+    d = today
+    while len(workdays) < 7:
+        if d.weekday() < 5:
+            workdays.append(d.strftime("%Y-%m-%d"))
+        d += timedelta(days=1)
+    cutoff_str = workdays[-1]
+    with get_db() as db:
+        rows = db.execute(
+            """SELECT date, start_time FROM direct_bookings
+               WHERE date >= ? AND date <= ?""",
+            (today.strftime("%Y-%m-%d"), cutoff_str),
+        ).fetchall()
+    return [{"date": r["date"], "start_time": r["start_time"]} for r in rows]
+
+
+class DirectBookingCreate(BaseModel):
+    date: str
+    start_time: str
+    end_time: str
+    name: str
+    company: str
+    email: str
+    phone: str = ""
+
+
+@app.post("/book-direct")
+@limiter.limit("5/hour")
+async def book_direct(
+    request: Request,
+    body: DirectBookingCreate,
+    background_tasks: BackgroundTasks,
+):
+    with get_db() as db:
+        exists = db.execute(
+            "SELECT 1 FROM direct_bookings WHERE date=? AND start_time=?",
+            (body.date, body.start_time),
+        ).fetchone()
+        if exists:
+            raise HTTPException(status_code=409, detail="该时段已被预约，请选择其他时间")
+        db.execute(
+            "INSERT INTO direct_bookings (date, start_time, end_time, name, company, email, phone) VALUES (?,?,?,?,?,?,?)",
+            (body.date, body.start_time, body.end_time, body.name, body.company, body.email, body.phone),
+        )
+    html = f"""<h3>新面试预约</h3>
+<p><b>时间：</b>{body.date} {body.start_time}–{body.end_time}</p>
+<p><b>姓名：</b>{body.name}</p>
+<p><b>公司：</b>{body.company}</p>
+<p><b>邮箱：</b>{body.email}</p>
+<p><b>电话：</b>{body.phone or '未填'}</p>"""
+    background_tasks.add_task(_send_email_sync, f"【简历网站】{body.company} 预约了面试", html)
+    return {"message": "ok"}
 
 
 @app.post("/book")
