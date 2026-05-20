@@ -351,11 +351,42 @@ async def submit_interest(
 
 @app.get("/slots")
 async def get_available_slots():
+    now = datetime.now()
+    today = now.date()
+    today_str = today.strftime("%Y-%m-%d")
+    current_time = now.strftime("%H:%M")
+
+    # 往后找 7 个工作日（含今天）作为展示窗口上限
+    workdays: list = []
+    d = today
+    while len(workdays) < 7:
+        if d.weekday() < 5:
+            workdays.append(d.strftime("%Y-%m-%d"))
+        d += timedelta(days=1)
+
+    cutoff_str = workdays[-1]
+
     with get_db() as db:
         rows = db.execute(
-            "SELECT id, date, start_time, end_time, note FROM time_slots WHERE is_booked=0 ORDER BY date, start_time"
+            """SELECT id, date, start_time, end_time, note
+               FROM time_slots
+               WHERE is_booked=0
+                 AND date >= ?
+                 AND date <= ?
+               ORDER BY date, start_time""",
+            (today_str, cutoff_str),
         ).fetchall()
-    return [dict(r) for r in rows]
+
+    result = []
+    for r in rows:
+        # 今天的时段：end_time 已过当前时间则跳过
+        if r["date"] == today_str and r["end_time"] <= current_time:
+            continue
+        # 只展示工作日内的时段（过滤管理员误建的周末时段）
+        if r["date"] not in workdays:
+            continue
+        result.append(dict(r))
+    return result
 
 
 @app.get("/admin/slots")
