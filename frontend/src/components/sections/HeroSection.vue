@@ -8,6 +8,13 @@
       <div class="hero__actions">
         <a class="btn btn--primary" href="#projects">查看项目</a>
         <a class="btn btn--ghost" href="#contact">联系我</a>
+        <a
+          class="btn btn--download"
+          href="https://maojike.oss-cn-beijing.aliyuncs.com/%E6%AF%9B%E9%99%85%E5%8F%AF_%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%AE%80%E5%8E%86.docx"
+          download="毛际可_前端工程师简历.docx"
+          target="_blank"
+          rel="noopener noreferrer"
+        >下载简历</a>
       </div>
     </div>
   </section>

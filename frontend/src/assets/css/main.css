@@ -72,6 +72,10 @@ img { max-width: 100%; display: block; }
 .btn--ghost::before { background: var(--color-text); }
 .btn--ghost:hover { color: var(--color-bg); border-color: var(--color-text); }
 
+.btn--download { background: transparent; color: var(--color-accent); border-color: var(--color-accent); }
+.btn--download::before { background: var(--color-accent); }
+.btn--download:hover { color: #fff; border-color: var(--color-accent); }
+
 /* Header */
 .site-header {
   position: sticky;
