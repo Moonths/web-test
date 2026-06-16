@@ -23,7 +23,7 @@ export const skills: SkillCategory[] = [
   },
   {
     title: '移动端 & 小程序',
-    items: ['uni-app', '微信原生小程序', 'H5 / Vant', 'Tailwind CSS', 'CSS3 动画'],
+    items: ['uni-app', '微信原生小程序', 'H5 / Vant', 'Echarts', 'CSS3 动画', 'Canvas'],
   },
   {
     title: '后端 & BFF',
@@ -61,23 +61,28 @@ export const experience: TimelineItem[] = [
 
 export const projects: Project[] = [
   {
-    title: '集团 ERP2.0 管理平台',
+    title: '集团 ERP2.0 管理平台 + ai对话&下单',
     desc: '集团化 ERP 管理后台，覆盖客户、产品、订单、采购、仓储、财务等核心模块，集成 AI 代理对话入口。搭建工程架构（动态路由权限、动态表格、流式下载、链式层级、pdf单据生成、批量导入优化），集成阿里云 OSS。',
     tags: ['Vue 3', 'TypeScript', 'Element Plus', 'Vite', 'Pinia'],
   },
+  // {
+  //   title: '智能文档问答系统',
+  //   desc: '支持文档解析建库、知识检索、带引用的流式问答。前端实现 SSE 流式渲染（Fetch ReadableStream），后端混合检索 + rerank + 大模型流式生成，Docker Compose 多服务编排。',
+  //   tags: ['Vue 3', 'FastAPI', 'PostgreSQL', 'Elasticsearch', 'DashScope'],
+  // },
   {
-    title: '智能文档问答系统',
-    desc: '支持文档解析建库、知识检索、带引用的流式问答。前端实现 SSE 流式渲染（Fetch ReadableStream），后端混合检索 + rerank + 大模型流式生成，Docker Compose 多服务编排。',
-    tags: ['Vue 3', 'FastAPI', 'PostgreSQL', 'Elasticsearch', 'DashScope'],
-  },
-  {
-    title: '仓储管理系统 + BFF',
+    title: '骑手 + 仓储管理 + BFF + 聚合配送',
     desc: '仓储全流程管理后台，覆盖入出库、盘点、销售、采购、售后等模块。独立开发 NestJS BFF 层，统一鉴权透传、全局异常过滤、XML 中间件，通过 RxJS 封装下游调用。',
     tags: ['Vue 3', 'Element UI', 'NestJS', 'TypeScript', 'RxJS'],
   },
   {
+    title: '万能报名/接龙小程序',
+    desc: '面向个人及企业的活动报名与团购接龙微信小程序，提供活动发布、在线报名、收费管理、签到核销、长图分享等完整闭环功能。支持发起普通活动和团购接龙两大场景，覆盖活动创建、名单管理、二维码签到、分账提现全流程，服务多类型活动组织者（个人/企业）。',
+    tags: ['mpvue', 'Webpack', 'ECharts', 'Canvas', 'OCR', '阿里云 OSS'],
+  },
+  {
     title: '微信小程序 B2B 电商平台',
     desc: '面向酒类经销商的 B2B 采购平台，含资质认证、商品多维筛选、购物车、微信支付、优惠券、推荐分销等完整链路。OSS STS 临时凭证上传，前端集成多种加密工具。',
-    tags: ['微信小程序', 'WXML/WXSS', '阿里云 OSS', '微信支付', 'RESTful API'],
+    tags: ['uniapp', '阿里云 OSS', '微信支付', 'RESTful API'],
   },
 ]
