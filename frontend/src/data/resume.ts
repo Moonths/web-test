@@ -37,7 +37,7 @@ export const skills: SkillCategory[] = [
 
 export const experience: TimelineItem[] = [
   {
-    period: '2018.11 — 2026.1',
+    period: '2018.11 — 2026.6',
     company: '挖酒网',
     role: '前端负责人',
     bullets: [
