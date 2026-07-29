@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import HeroSection from '@/components/sections/HeroSection.vue'
 import AboutSection from '@/components/sections/AboutSection.vue'
@@ -12,7 +11,6 @@ import AiChatWidget from '@/components/AiChatWidget.vue'
 
 <template>
   <div class="rw-root">
-    <AppHeader />
     <main>
       <HeroSection />
       <AboutSection />

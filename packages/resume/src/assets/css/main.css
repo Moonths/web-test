@@ -75,80 +75,10 @@
 .rw-root .btn--download::before { background: var(--color-accent); }
 .rw-root .btn--download:hover { color: #fff; border-color: var(--color-accent); }
 
-/* Header */
-.rw-root .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  height: var(--header-h);
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: saturate(160%) blur(16px);
-  -webkit-backdrop-filter: saturate(160%) blur(16px);
-  border-bottom: 1px solid transparent;
-  transition: border-color var(--dur-base) var(--ease);
-}
-@media (prefers-color-scheme: dark) {
-  .site-header { background: rgba(13,17,23,0.95); }
-}
-.rw-root .site-header.is-scrolled { border-bottom-color: var(--color-border); }
-
-.rw-root .nav { display: flex; align-items: center; justify-content: space-between; height: 100%; }
-.rw-root .nav__brand {
-  font-weight: 800;
-  font-size: var(--fs-md);
-  font-family: var(--font-display);
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-}
-.rw-root .nav__menu { display: flex; gap: var(--space-7); }
-.rw-root .nav__menu a {
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  position: relative;
-  padding-bottom: 3px;
-  transition: color var(--dur-fast) var(--ease);
-}
-.rw-root .nav__menu a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--color-accent);
-  transition: width var(--dur-base) var(--ease);
-}
-.rw-root .nav__menu a:hover { color: var(--color-text); }
-.nav__menu a:hover::after,
-.rw-root .nav__menu a.is-active::after { width: 100%; }
-.rw-root .nav__menu a.is-active { color: var(--color-text); }
-
-.rw-root .nav__toggle {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 24px;
-  height: 18px;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-}
-.rw-root .nav__toggle span {
-  display: block;
-  height: 2px;
-  background: var(--color-text);
-  border-radius: 2px;
-  transition: transform var(--dur-base) var(--ease), opacity var(--dur-fast) var(--ease);
-}
-.rw-root .nav__toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-.rw-root .nav__toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-.rw-root .nav__toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
+/* Hero */
 /* Hero */
 .rw-root .hero {
-  padding: calc(var(--header-h) + var(--space-9)) 0 var(--space-9);
+  padding: var(--space-8) 0 var(--space-9);
   position: relative;
   overflow: hidden;
 }
@@ -171,8 +101,8 @@
   }
 }
 @keyframes hero-breathe {
-  .rw-root from { opacity: 0.6; transform: scale(1); }
-  .rw-root to   { opacity: 1;   transform: scale(1.05); }
+  from { opacity: 0.6; transform: scale(1); }
+  to   { opacity: 1;   transform: scale(1.05); }
 }
 
 .rw-root #hero-matrix {
@@ -412,8 +342,8 @@
   vertical-align: baseline;
 }
 @keyframes tw-blink {
-  .rw-root 0%, .rw-root 100% { opacity: 1; }
-  .rw-root 50%       { opacity: 0; }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -443,7 +373,7 @@
 /* ─── 2D / 3D toggle button ──────────────────────────────────────── */
 .rw-root .view-toggle {
   position: absolute;
-  top: calc(var(--header-h) + 16px);
+  top: 16px;
   right: var(--space-8);
   z-index: 10;
   display: inline-flex;
@@ -522,7 +452,7 @@
   flex-shrink: 0;
 }
 @keyframes vt-spin {
-  .rw-root to { transform: rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* loading state dim */

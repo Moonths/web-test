@@ -10,8 +10,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  assetsInclude: ['**/*.glb', '**/*.gltf'],
   server: {
     port: 5100,
-    open: true,
+    open: false,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
   },
 })

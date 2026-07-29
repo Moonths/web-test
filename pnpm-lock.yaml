@@ -166,13 +166,16 @@ importers:
       qiankun:
         specifier: ^2.10.16
         version: 2.10.16
+      three:
+        specifier: ^0.168.0
+        version: 0.168.0
       vue:
         specifier: ^3.4.27
         version: 3.5.39(typescript@5.4.5)
-      vue-router:
-        specifier: ^4.3.3
-        version: 4.6.4(vue@3.5.39(typescript@5.4.5))
     devDependencies:
+      '@types/three':
+        specifier: ^0.185.0
+        version: 0.185.1
       '@vitejs/plugin-vue':
         specifier: ^5.0.4
         version: 5.0.4(vite@5.2.11)(vue@3.5.39(typescript@5.4.5))

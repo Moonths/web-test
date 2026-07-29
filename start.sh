@@ -1,40 +1,25 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# resume-platform — 启动脚本
+# 微前端架构：portal（3D 展厅）+ resume（简历子应用）+ dashboard（大屏子应用）
+
 set -e
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
-KILLED=false
+echo "=== resume-platform 启动 ==="
+echo ""
 
-cleanup() {
-  if [ "$KILLED" = true ]; then return; fi
-  KILLED=true
+# 安装依赖（如需要）
+if [ ! -d "node_modules" ]; then
+  echo "[1/2] 安装依赖..."
+  pnpm install --no-strict-peer-dependencies
   echo ""
-  echo "🛑 正在停止所有服务..."
-  kill $(jobs -p) 2>/dev/null
-  wait 2>/dev/null
-}
+fi
 
-trap cleanup INT TERM
-
-# --- 后端 ---
-echo "🔧 启动后端 (FastAPI :8000)..."
-cd "$ROOT/backend"
-source .venv/bin/activate
-uvicorn main:app --reload --port 8000 &
-
-# --- 前端 ---
-echo "🎨 启动前端 (pnpm workspaces)..."
-cd "$ROOT"
-pnpm dev &
-
+echo "[2/2] 并行启动各服务..."
+echo "     portal:       http://localhost:5100  (3D 展厅主页)"
+echo "     resume:       http://localhost:5173  (简历子应用)"
+echo "     dashboard:    http://localhost:5176  (大屏子应用)"
 echo ""
-echo "所有服务启动中..."
-echo "  Portal:       http://localhost:5100"
-echo "  Resume:       http://localhost:5173"
-echo "  Admin:        http://localhost:5174"
-echo "  Digital City: http://localhost:5175"
-echo "  Dashboard:    http://localhost:5176"
-echo "  Backend API:  http://localhost:8000"
-echo ""
-echo "按 Ctrl+C 停止所有服务"
 
-wait
+# 同时启动 portal、resume 和 dashboard
+pnpm --parallel --filter portal --filter @resume/resume --filter @resume/dashboard run dev

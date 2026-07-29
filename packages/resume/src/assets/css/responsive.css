@@ -18,28 +18,12 @@
 
   .rw-root .container{ padding: 0 var(--space-5); }
 
-  .rw-root .nav__toggle{ display: flex; }
-  .rw-root .nav__menu{
-    position: fixed;
-    top: var(--header-h);
-    left: 0;
-    right: 0;
-    background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
-    flex-direction: column;
-    gap: 0;
-    padding: var(--space-2) var(--space-5);
-    transform: translateY(-8px);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform var(--dur-base) var(--ease), opacity var(--dur-base) var(--ease);
-  }
   .rw-root .nav__menu.is-open{ transform: translateY(0); opacity: 1; pointer-events: auto; }
   .rw-root .nav__menu li{ border-bottom: 1px solid var(--color-border); }
   .rw-root .nav__menu li:last-child{ border-bottom: 0; }
   .rw-root .nav__menu a{ display: block; padding: var(--space-4) 0; font-size: var(--fs-base); }
 
-  .rw-root .hero{ padding: calc(var(--header-h) + var(--space-8)) 0 var(--space-8); }
+  .rw-root .hero{ padding: var(--space-8) 0 var(--space-8); }
   .rw-root .hero__actions{ flex-direction: column; align-items: stretch; }
   .rw-root .hero__actions .btn{ text-align: center; }
 
