@@ -19,6 +19,85 @@ const canvasContainer = ref<HTMLElement | null>(null)
 const isFullscreen = ref(false)
 const showHint = ref(true)
 
+// 摇杆状态
+const jActive = ref(false)
+const jThumbX = ref(0)
+const jThumbY = ref(0)
+const J_RADIUS = 52
+const J_DEAD_ZONE = 10
+let jTouchId: number | null = null
+const jKeys = new Set<string>()
+
+function jDispatch(key: string, down: boolean) {
+  window.dispatchEvent(new KeyboardEvent(down ? 'keydown' : 'keyup', { key, bubbles: true }))
+}
+
+function jUpdateDir(dx: number, dy: number) {
+  const dist = Math.hypot(dx, dy)
+  if (dist < J_DEAD_ZONE) {
+    // 松开所有方向
+    for (const k of jKeys) jDispatch(k, false)
+    jKeys.clear()
+    return
+  }
+
+  const newKeys = new Set<string>()
+  if (dy < -J_DEAD_ZONE) newKeys.add('w')
+  if (dy > J_DEAD_ZONE) newKeys.add('s')
+  if (dx < -J_DEAD_ZONE) newKeys.add('a')
+  if (dx > J_DEAD_ZONE) newKeys.add('d')
+
+  // 按下的新键
+  for (const k of newKeys) { if (!jKeys.has(k)) jDispatch(k, true) }
+  // 松开移除的键
+  for (const k of jKeys) { if (!newKeys.has(k)) jDispatch(k, false) }
+  jKeys.clear()
+  for (const k of newKeys) jKeys.add(k)
+}
+
+function onJoystickStart(e: TouchEvent) {
+  e.preventDefault()
+  const t = e.changedTouches[0]
+  jTouchId = t.identifier
+  jActive.value = true
+  jThumbX.value = 0
+  jThumbY.value = 0
+}
+
+function onJoystickMove(e: TouchEvent) {
+  e.preventDefault()
+  let t: Touch | null = null
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    if (e.changedTouches[i].identifier === jTouchId) { t = e.changedTouches[i]; break }
+  }
+  if (!t) return
+
+  // joystick base element center in page coords
+  const base = document.querySelector('.joystick-base')!
+  const rect = base.getBoundingClientRect()
+  const cx = rect.left + rect.width / 2
+  const cy = rect.top + rect.height / 2
+
+  let dx = t.clientX - cx
+  let dy = t.clientY - cy
+  const dist = Math.hypot(dx, dy)
+  if (dist > J_RADIUS) { dx = dx / dist * J_RADIUS; dy = dy / dist * J_RADIUS }
+
+  jThumbX.value = dx
+  jThumbY.value = dy
+  jUpdateDir(dx, dy)
+}
+
+function onJoystickEnd(e: TouchEvent) {
+  e.preventDefault()
+  for (const k of jKeys) jDispatch(k, false)
+  jKeys.clear()
+  jActive.value = false
+  jThumbX.value = 0
+  jThumbY.value = 0
+  jTouchId = null
+}
+
 const { init, startRenderLoop, destroy, getState, addFrameCallback } = useExhibitionHall(canvasContainer)
 
 let character: CharacterController | null = null
@@ -46,7 +125,7 @@ onMounted(() => {
   // 屏幕系统
   screens = useExhibitionScreens(state)
 
-  // 主屏幕两侧的落地魔镜
+// 主屏幕两侧的落地魔镜
   mirrors = useMagicMirrors(state)
 
   // 墙面代码流动效
@@ -218,6 +297,19 @@ function exitFullscreen() {
         </div>
       </div>
     </Transition>
+
+    <!-- 摇杆（移动端触控） -->
+    <div class="joystick-container" v-show="!isFullscreen"
+         @touchstart="onJoystickStart"
+         @touchmove="onJoystickMove"
+         @touchend="onJoystickEnd"
+         @touchcancel="onJoystickEnd">
+      <div class="joystick-base">
+        <div class="joystick-thumb" :style="{
+          transform: 'translate(' + jThumbX + 'px, ' + jThumbY + 'px)'
+        }" />
+      </div>
+    </div>
 
     <!-- 全屏简历覆盖层 -->
     <Transition name="fs-overlay">
@@ -516,11 +608,54 @@ html, body, #app {
 .fs-overlay-enter-from,
 .fs-overlay-leave-to { opacity: 0; }
 
+/* 摇杆 */
+.joystick-container {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  width: 120px;
+  height: 120px;
+  z-index: 50;
+  touch-action: none;
+}
+
+.joystick-base {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.45);
+  border: 2px solid rgba(129, 140, 248, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.joystick-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.6), rgba(79, 70, 229, 0.4));
+  border: 2px solid rgba(129, 140, 248, 0.5);
+  position: absolute;
+  transition: none;
+}
+
+@media (pointer: fine) {
+  .joystick-container { display: none; }
+}
+
 @media (max-width: 768px) {
   .overlay-content { padding: 40px 20px 60px; }
   .skills-grid { grid-template-columns: 1fr; }
   .projects-grid { grid-template-columns: 1fr; }
   .timeline-meta { flex-direction: column; gap: 2px; }
   .timeline-period { margin-left: 0; }
+
+  .exhibition-hint { bottom: 160px; }
+  .hint-text { font-size: 1.3rem; }
+  .hint-keys { gap: 8px; }
+  .hint-keys kbd { min-width: 36px; height: 36px; font-size: 1.0rem; padding: 0 8px; }
+  .hint-sep { font-size: 1.0rem; }
 }
 </style>

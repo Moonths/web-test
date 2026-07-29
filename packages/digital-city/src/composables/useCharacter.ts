@@ -28,7 +28,7 @@ export function useCharacter(scene: THREE.Scene): CharacterController {
   let allActions: THREE.AnimationAction[] = []
   let walkAction: THREE.AnimationAction | null = null
 
-  group.position.set(0, 0, 3)
+  group.position.set(0, 0, -2)
   scene.add(group)
 
   // 角色跟随光源
@@ -68,8 +68,18 @@ export function useCharacter(scene: THREE.Scene): CharacterController {
         if (child instanceof THREE.Mesh) {
           child.castShadow = true
           child.receiveShadow = true
-          const mat = child.material as THREE.Material
-          if (mat) { mat.depthWrite = true; mat.needsUpdate = true }
+          const mat = child.material as THREE.MeshStandardMaterial
+          if (mat) {
+            mat.depthWrite = true
+            mat.needsUpdate = true
+
+            // lighten bat color - texture is too dark against floor
+            mat.color.setHex(0xb0b8d0)
+            if (mat.emissive) {
+              mat.emissive.setHex(0x6068a0)
+              mat.emissiveIntensity = 0.5
+            }
+          }
         }
       })
 

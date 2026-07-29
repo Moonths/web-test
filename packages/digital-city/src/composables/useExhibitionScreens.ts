@@ -134,7 +134,7 @@ export function useExhibitionScreens(state: HallSceneState): ScreenObjects {
   mainScreenGlow.position.z -= 0.01
   scene.add(mainScreenGlow)
 
-  // --- 项目模块 ----
+  // --- 项目模块：Image + CanvasTexture 渲染图片 ---
   const projectScreens: THREE.Mesh[] = []
 
   // 项目画框图片路径（左 → 流程图，右 → 小程序截图）
@@ -145,117 +145,76 @@ export function useExhibitionScreens(state: HallSceneState): ScreenObjects {
 
   for (let i = 0; i < PROJECT_SLOTS.length; i++) {
     const slot = PROJECT_SLOTS[i]
+    const { x, y, z, width: sw, height: sh } = slot
 
-    // 创建深色占位 CanvasTexture，确保 material 从一开始就有 map
-    // 避免后期动态添加 map 时 Three.js shader 重编译异常
-    const placeholderCanvas = document.createElement('canvas')
-    placeholderCanvas.width = 2
-    placeholderCanvas.height = 2
-    const ctx = placeholderCanvas.getContext('2d')!
-    ctx.fillStyle = '#0d0d1a'
-    ctx.fillRect(0, 0, 2, 2)
-    const placeholderTex = new THREE.CanvasTexture(placeholderCanvas)
-    placeholderTex.minFilter = THREE.LinearFilter
-    placeholderTex.magFilter = THREE.LinearFilter
-
-    const pGeo = new THREE.PlaneGeometry(slot.width, slot.height)
-    const pMat = new THREE.MeshStandardMaterial({
-      map: placeholderTex,
-      roughness: 0.4,
-      metalness: 0.02,
-    })
-    const pScreen = new THREE.Mesh(pGeo, pMat)
-    pScreen.position.set(slot.x, slot.y, slot.z)
-    if (slot.x < 0) {
-      const dx = 0 - slot.x
-      const dz = 0 - slot.z
-      pScreen.rotation.y = Math.atan2(dx, dz)
-    } else {
-      const dx2 = 0 - slot.x
-      const dz2 = 0 - slot.z
-      pScreen.rotation.y = Math.atan2(dx2, dz2)
-    }
-    scene.add(pScreen)
-    projectScreens.push(pScreen)
-
-    // 木质画框
+    // 木质画框（宽于画面）
     const fw = 0.2
-    const pFrameGeo = new THREE.PlaneGeometry(slot.width + fw * 2, slot.height + fw * 2)
-    const frameColors = ['#5a4838', '#5a4030']
-    const pFrameMat = new THREE.MeshStandardMaterial({
-      color: frameColors[i], roughness: 0.45, metalness: 0.05,
+    const frameGeo = new THREE.PlaneGeometry(sw + fw * 2, sh + fw * 2)
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: ['#5a4838', '#5a4030'][i],
+      roughness: 0.45, metalness: 0.05,
     })
-    const pFrame = new THREE.Mesh(pFrameGeo, pFrameMat)
-    pFrame.position.copy(pScreen.position)
-    pFrame.position.z += (pScreen.position.z > 0 ? -0.04 : 0.04)
-    pFrame.rotation.y = pScreen.rotation.y
-    scene.add(pFrame)
+    const frame = new THREE.Mesh(frameGeo, frameMat)
+    frame.position.set(x, y, z + 0.02)
+    const ddx = 0 - x; const ddz = 0 - z
+    frame.rotation.y = Math.atan2(ddx, ddz)
+    scene.add(frame)
 
-    // 画框内衬
-    const linerGeo = new THREE.PlaneGeometry(slot.width + 0.06, slot.height + 0.06)
-    const linerMat = new THREE.MeshBasicMaterial({
-      color: '#2a2a3a', transparent: true, opacity: 0.3, side: THREE.DoubleSide,
+    // 图片画面（占位后替换）
+    const imgGeo = new THREE.PlaneGeometry(sw, sh)
+    const imgMat = new THREE.MeshStandardMaterial({
+      color: '#1a1a2e', roughness: 0.3, metalness: 0.02,
     })
-    const liner = new THREE.Mesh(linerGeo, linerMat)
-    liner.position.copy(pScreen.position)
-    liner.position.z += (pScreen.position.z > 0 ? -0.02 : 0.02)
-    liner.rotation.y = pScreen.rotation.y
-    scene.add(liner)
+    const imgMesh = new THREE.Mesh(imgGeo, imgMat)
+    imgMesh.position.set(x, y, z)
+    imgMesh.rotation.y = Math.atan2(ddx, ddz)
+    scene.add(imgMesh)
+    projectScreens.push(imgMesh)
 
-    // 异步加载图片纹理
-    const loader = new THREE.TextureLoader()
-    loader.load(
-      assetUrl(projectImagePaths[i]),
-      (tex) => {
-        console.log('[Exhibition] Texture loaded:', projectImagePaths[i], tex.image.width + 'x' + tex.image.height)
-        const imageAspect = tex.image.width / tex.image.height
-        const planeAspect = slot.width / slot.height
+    // 异步加载图片
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      const cvs = document.createElement('canvas')
+      cvs.width = img.width; cvs.height = img.height
+      const ctx = cvs.getContext('2d')!
+      ctx.drawImage(img, 0, 0)
 
-        tex.minFilter = THREE.LinearFilter
-        tex.magFilter = THREE.LinearFilter
-        tex.colorSpace = THREE.SRGBColorSpace
+      const tex = new THREE.CanvasTexture(cvs)
+      tex.minFilter = THREE.LinearFilter
+      tex.magFilter = THREE.LinearFilter
+      tex.colorSpace = THREE.SRGBColorSpace
 
-        if (imageAspect > planeAspect) {
-          tex.repeat.x = planeAspect / imageAspect
-          tex.repeat.y = 1
-          tex.offset.x = (1 - tex.repeat.x) / 2
-          tex.offset.y = 0
-        } else {
-          tex.repeat.x = 1
-          tex.repeat.y = imageAspect / planeAspect
-          tex.offset.x = 0
-          tex.offset.y = (1 - tex.repeat.y) / 2
-        }
-        tex.needsUpdate = true
-
-        // 替换整个 mesh：新材质从创建时就带 map，避免 Three.js shader 重编译问题
-        const newGeo = new THREE.PlaneGeometry(slot.width, slot.height)
-        const newMat = new THREE.MeshStandardMaterial({
-          map: tex,
-          roughness: 0.3,
-          metalness: 0.02,
-        })
-        const newScreen = new THREE.Mesh(newGeo, newMat)
-        newScreen.position.copy(pScreen.position)
-        newScreen.rotation.copy(pScreen.rotation)
-
-        scene.remove(pScreen)
-        scene.add(newScreen)
-        projectScreens[i] = newScreen
-
-        pGeo.dispose()
-        pMat.dispose()
-      },
-      undefined,
-      () => {
-        console.warn('[Exhibition] Failed to load image: ' + projectImagePaths[i])
+      // 等比适配画面（cover 模式）
+      const imgAspect = img.width / img.height
+      const planeAspect = sw / sh
+      if (imgAspect > planeAspect) {
+        tex.repeat.x = planeAspect / imgAspect
+        tex.repeat.y = 1
+        tex.offset.x = (1 - tex.repeat.x) / 2
+        tex.offset.y = 0
+      } else {
+        tex.repeat.x = 1
+        tex.repeat.y = imgAspect / planeAspect
+        tex.offset.x = 0
+        tex.offset.y = (1 - tex.repeat.y) / 2
       }
-    )
+      tex.needsUpdate = true
+
+      // 替换材质
+      imgMesh.material = new THREE.MeshStandardMaterial({
+        map: tex, roughness: 0.3, metalness: 0.02,
+      })
+      imgGeo.dispose()
+      imgMat.dispose()
+    }
+    img.onerror = () => { console.warn('[Exhibition] Failed to load: ' + projectImagePaths[i]) }
+    img.src = assetUrl(projectImagePaths[i])
   }
 
-  // --- 动画提示 ---
+    // --- 动画提示 ---
   const hintRing = createHintRing()
-  hintRing.position.set(MAIN_SCREEN.x, MAIN_SCREEN.y - sh / 2 - 0.6, MAIN_SCREEN.z + 0.5)
+  hintRing.position.set(MAIN_SCREEN.x, MAIN_SCREEN.y - sh / 2 + 1.2, MAIN_SCREEN.z + 0.5)
   scene.add(hintRing)
 
   function update(delta: number, elapsed: number) {
@@ -264,7 +223,7 @@ export function useExhibitionScreens(state: HallSceneState): ScreenObjects {
     ;(mainScreenGlow.material as THREE.MeshBasicMaterial).opacity = 0.2 + pulse * 0.15
 
     // 提示环脉冲 + 旋转
-    hintRing.position.y = MAIN_SCREEN.y - sh / 2 - 0.6 + Math.sin(elapsed * 2) * 0.15
+    hintRing.position.y = MAIN_SCREEN.y - sh / 2 + 1.2 + Math.sin(elapsed * 2) * 0.15
     hintRing.rotation.z += delta * 0.5
     hintRing.scale.setScalar(0.85 + Math.sin(elapsed * 2.5) * 0.15)
 

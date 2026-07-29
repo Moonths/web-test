@@ -34,8 +34,8 @@ export const MAIN_SCREEN = {
   x: 0,
   y: 6.0,
   z: -10.5,
-  width: 10,
-  height: 5.5,
+  width: 12.1,
+  height: 6.65,
 }
 
 // 项目模块位置 — 左墙1个 + 右墙1个
@@ -47,7 +47,7 @@ export const PROJECT_SLOTS = [
 
 // 落地魔镜位置 — 主屏幕两侧（原「项目一」「项目三」位置）
 export const MIRROR_SLOTS = {
-  left:  { x: -12, z: -8 },
+  left:  { x: -8, z: -6 },
   right: { x: 12,  z: -8 },
 }
 
