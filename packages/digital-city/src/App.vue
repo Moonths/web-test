@@ -187,12 +187,20 @@ onMounted(() => {
     orbitCamera?.update(delta)
   })
 
+  // 调试：暴露对象引用用于浏览器控制台调试
+  ;(window as any).__debugTrigger = triggerFullscreen
+  ;(window as any).__debugScreens = screens
+  ;(window as any).__debugState = state
+  ;(window as any).__debugIsFullscreen = isFullscreen
+
   // 点击检测 — 主屏幕 & 提示环
   const raycaster = new THREE.Raycaster()
   const mouse = new THREE.Vector2()
 
   function onCanvasClick(e: MouseEvent) {
-    if (!state || !screens || isFullscreen.value) return
+    if (!state || !screens || isFullscreen.value) {
+      return
+    }
 
     const rect = canvasContainer.value!.getBoundingClientRect()
     mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
@@ -201,9 +209,12 @@ onMounted(() => {
     raycaster.setFromCamera(mouse, state.camera)
     const intersects = raycaster.intersectObjects(
       [
-        screens.mainScreen, screens.mainScreenGlow, ...screens.hintRing.children,
+        screens.mainScreen,
+        screens.mainScreenGlow,
+        ...screens.hintRing.children,
         // 右侧魔镜（含提示环）与主屏幕行为一致；左镜为纯反射镜，不可点击
-        ...(mirrors ? [mirrors.rightSurface, ...mirrors.rightHintRing.children] : []),
+        // 过滤掉可能的 null 值（如 mirrors.rightSurface 始终为 null）
+        ...(mirrors ? [mirrors.rightSurface, ...mirrors.rightHintRing.children].filter(Boolean) : []),
       ],
       true,
     )
@@ -226,11 +237,28 @@ onMounted(() => {
 
   state.renderer.domElement.addEventListener('click', onCanvasClick)
   // 阻止 canvas 上的 click 在拖拽结束后误触发
+  // 只在鼠标按下期间记录拖拽状态，避免普通 mousemove 吞掉点击
+  let _mouseDown = false
+  let _mouseStartX = 0
+  let _mouseStartY = 0
   state.renderer.domElement.addEventListener('mousedown', (e: MouseEvent) => {
+    _mouseDown = true
+    _mouseStartX = e.clientX
+    _mouseStartY = e.clientY
     ;(window as any).__dragMoved = false
   })
-  state.renderer.domElement.addEventListener('mousemove', () => {
-    ;(window as any).__dragMoved = true
+  state.renderer.domElement.addEventListener('mousemove', (e: MouseEvent) => {
+    if (_mouseDown) {
+      // 死区：移动超过 5px 才算拖拽，防止微小点击误触
+      const dx = (e as MouseEvent).clientX - _mouseStartX
+      const dy = (e as MouseEvent).clientY - _mouseStartY
+      if (Math.hypot(dx, dy) > 5) {
+        ;(window as any).__dragMoved = true
+      }
+    }
+  })
+  window.addEventListener('mouseup', () => {
+    _mouseDown = false
   })
   // 用委托的方式修复：如果拖拽过，忽略 click
   state.renderer.domElement.addEventListener('click', (e: MouseEvent) => {
@@ -244,6 +272,9 @@ onMounted(() => {
   state.scene.userData.cleanup = () => {
     state.renderer.domElement.removeEventListener('click', onCanvasClick)
     window.removeEventListener('keydown', onKeyDown)
+    window.removeEventListener('mouseup', () => { _mouseDown = false })
+    ;(window as any).__dragMoved = false
+    _mouseDown = false
   }
 
   startRenderLoop()

@@ -158,7 +158,7 @@ function buildMindMapSteps(W: number, H: number): FCStep[] {
         ctx.font = '500 16px "Inter", "PingFang SC", sans-serif'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        ctx.fillText(b.label, b.x, b.y - 16)
+        ctx.fillText(b.label, b.x, b.y - 24)
       }
     })
 
@@ -171,7 +171,7 @@ function buildMindMapSteps(W: number, H: number): FCStep[] {
           ctx.font = '400 12px "Inter", "PingFang SC", sans-serif'
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
-          ctx.fillText(b.subs[si], b.x, b.y + 10 + si * 18)
+          ctx.fillText(b.subs[si], b.x, b.y + 2 + si * 18)
         }
       })
     }
@@ -382,6 +382,10 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
     // 清除画布
     ctx.clearRect(0, 0, W, H)
 
+    // 整体下移10px，修正上方留白过多下方留白不足的问题
+    ctx.save()
+    ctx.translate(0, 10)
+
     // 计算当前进度 (0-1)，循环
     const t = (elapsed % FC_TOTAL) / FC_TOTAL
 
@@ -392,6 +396,8 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
       const progress = Math.min(localT / step.tDur, 1)
       step.draw(ctx, progress)
     }
+
+    ctx.restore()
 
     fcTexture.needsUpdate = true
   }
