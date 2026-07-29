@@ -1,0 +1,84 @@
+/* ============================================
+   @resume/shared Design Tokens
+   所有子应用的公共设计变量基础
+   各子应用通过命名空间选择器消费，避免全局污染
+   ============================================ */
+
+:root {
+  /* ---- 品牌色 ---- */
+  --shared-primary: #4F46E5;
+  --shared-primary-dark: #4338CA;
+  --shared-primary-light: #EEF2FF;
+  --shared-accent: #F59E0B;
+  --shared-accent-hover: #D97706;
+
+  /* ---- 中性色: Light ---- */
+  --shared-bg: #FFFFFF;
+  --shared-bg-alt: #F8FAFC;
+  --shared-surface: #F8FAFC;
+  --shared-border: #E2E8F0;
+  --shared-text: #0F172A;
+  --shared-text-soft: #475569;
+  --shared-text-muted: #94A3B8;
+
+  /* ---- 中性色: Dark ---- */
+  --shared-bg-dark: #0B1120;
+  --shared-bg-alt-dark: #111827;
+  --shared-surface-dark: #1F2937;
+  --shared-border-dark: #1F2937;
+  --shared-text-dark: #F1F5F9;
+  --shared-text-soft-dark: #CBD5E1;
+  --shared-text-muted-dark: #64748B;
+
+  /* ---- 语义色 ---- */
+  --shared-success: #10B981;
+  --shared-warning: #F59E0B;
+  --shared-error: #EF4444;
+  --shared-info: #3B82F6;
+
+  /* ---- 排版 ---- */
+  --shared-font-sans: "Inter", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+  --shared-font-display: "Syne", "Inter", system-ui, sans-serif;
+  --shared-font-mono: "JetBrains Mono", "SF Mono", "Consolas", monospace;
+
+  /* ---- 字号层级 ---- */
+  --shared-fs-xs: 0.75rem;
+  --shared-fs-sm: 0.875rem;
+  --shared-fs-base: 1rem;
+  --shared-fs-md: 1.125rem;
+  --shared-fs-lg: 1.25rem;
+  --shared-fs-xl: 1.5rem;
+  --shared-fs-2xl: 2rem;
+  --shared-fs-3xl: clamp(2.5rem, 6vw, 4rem);
+
+  /* ---- 间距 (8pt 系统) ---- */
+  --shared-space-1: 4px;
+  --shared-space-2: 8px;
+  --shared-space-3: 12px;
+  --shared-space-4: 16px;
+  --shared-space-5: 20px;
+  --shared-space-6: 24px;
+  --shared-space-7: 32px;
+  --shared-space-8: 48px;
+  --shared-space-9: 80px;
+
+  /* ---- 圆角 ---- */
+  --shared-radius-sm: 3px;
+  --shared-radius-md: 6px;
+  --shared-radius-lg: 10px;
+  --shared-radius-pill: 9999px;
+
+  /* ---- 阴影 ---- */
+  --shared-shadow-sm: 0 1px 3px rgba(31, 35, 40, 0.08);
+  --shared-shadow-md: 0 4px 16px rgba(31, 35, 40, 0.10);
+  --shared-shadow-lg: 0 12px 40px rgba(31, 35, 40, 0.13);
+  --shared-shadow-xl: 0 24px 64px rgba(31, 35, 40, 0.17);
+
+  /* ---- 动效 ---- */
+  --shared-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --shared-dur-fast: 150ms;
+  --shared-dur-base: 280ms;
+
+  /* ---- 布局 ---- */
+  --shared-container-max: 1200px;
+}

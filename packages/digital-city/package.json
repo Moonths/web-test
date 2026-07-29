@@ -1,0 +1,24 @@
+{
+  "name": "@resume/digital-city",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5175",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@resume/shared": "workspace:*",
+    "three": "^0.168.0",
+    "vue": "^3.4.27"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-qiankun": "^1.0.15",
+    "vue-tsc": "^2.0.16"
+  }
+}

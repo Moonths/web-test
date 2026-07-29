@@ -6,3 +6,22 @@ dist/
 *.log
 .DS_Store
 nginx.conf
+
+# pnpm
+.pnpm-store/
+
+# Turbo
+.turbo/
+
+# IDE
+.vscode/settings.json
+*.swp
+*.swo
+
+# Build outputs
+portal/dist/
+packages/*/dist/
+
+# Lockfiles (pnpm only)
+package-lock.json
+yarn.lock

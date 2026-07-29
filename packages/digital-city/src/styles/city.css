@@ -1,0 +1,13 @@
+/* digital-city 子应用 — BEM 命名空间：dc- */
+
+.dc-root {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background: #0a0e17;
+  overflow: hidden;
+}
+
+.dc-root canvas {
+  display: block;
+}

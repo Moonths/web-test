@@ -1,0 +1,80 @@
+/* ============================================
+   Resume 子应用 — BEM 命名空间：rw-
+   继承 @resume/shared tokens，通过 .rw-root 作用域消费
+   ============================================ */
+
+.rw-root {
+  --color-primary:       var(--shared-primary);
+  --color-primary-dark:  var(--shared-primary-dark);
+  --color-primary-light: var(--shared-primary-light);
+  --color-accent:        var(--shared-primary);
+  --color-accent-hover:  var(--shared-primary-dark);
+  --color-accent2:       var(--shared-success);
+
+  --color-bg:            var(--shared-bg);
+  --color-bg-alt:        var(--shared-bg-alt);
+  --color-surface:       var(--shared-surface);
+  --color-border:        var(--shared-border);
+
+  --color-text:          var(--shared-text);
+  --color-text-soft:     var(--shared-text-soft);
+  --color-text-muted:    var(--shared-text-muted);
+
+  --font-sans:           var(--shared-font-sans);
+  --font-display:        var(--shared-font-display);
+  --font-mono:           var(--shared-font-mono);
+
+  --fs-xs:               var(--shared-fs-xs);
+  --fs-sm:               var(--shared-fs-sm);
+  --fs-base:             var(--shared-fs-base);
+  --fs-md:               var(--shared-fs-md);
+  --fs-lg:               var(--shared-fs-lg);
+  --fs-xl:               var(--shared-fs-xl);
+  --fs-2xl:              var(--shared-fs-2xl);
+  --fs-3xl:              var(--shared-fs-3xl);
+
+  --space-1:             var(--shared-space-1);
+  --space-2:             var(--shared-space-2);
+  --space-3:             var(--shared-space-3);
+  --space-4:             var(--shared-space-4);
+  --space-5:             var(--shared-space-5);
+  --space-6:             var(--shared-space-6);
+  --space-7:             var(--shared-space-7);
+  --space-8:             var(--shared-space-8);
+  --space-9:             var(--shared-space-9);
+
+  --radius-sm:           var(--shared-radius-sm);
+  --radius-md:           var(--shared-radius-md);
+  --radius-lg:           var(--shared-radius-lg);
+  --radius-pill:         var(--shared-radius-pill);
+
+  --shadow-sm:           var(--shared-shadow-sm);
+  --shadow-md:           var(--shared-shadow-md);
+  --shadow-lg:           var(--shared-shadow-lg);
+  --shadow-xl:           var(--shared-shadow-xl);
+  --shadow-primary:      0 8px 24px rgba(79, 70, 229, 0.28);
+
+  --container-max:       var(--shared-container-max);
+  --header-h:            64px;
+
+  --ease:                var(--shared-ease);
+  --dur-fast:            var(--shared-dur-fast);
+  --dur-base:            var(--shared-dur-base);
+}
+
+@media (prefers-color-scheme: dark) {
+  .rw-root {
+    --color-accent:       #818CF8;
+    --color-accent-hover: #6366F1;
+    --color-accent2:      #34D399;
+
+    --color-bg:           var(--shared-bg-dark);
+    --color-bg-alt:       var(--shared-bg-alt-dark);
+    --color-surface:      var(--shared-surface-dark);
+    --color-border:       var(--shared-border-dark);
+
+    --color-text:         var(--shared-text-dark);
+    --color-text-soft:    var(--shared-text-soft-dark);
+    --color-text-muted:   var(--shared-text-muted-dark);
+  }
+}

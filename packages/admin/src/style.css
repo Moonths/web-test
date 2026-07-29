@@ -1,0 +1,13 @@
+/* Admin 子应用 — BEM 命名空间：adm- */
+.adm-root *, .adm-root *::before, .adm-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.adm-root {
+  font-family: var(--shared-font-sans);
+  color: var(--shared-text);
+  background: var(--shared-bg);
+  min-height: 100vh;
+}
