@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="毛际可 — 10年前端工程师，专注 Vue 生态、移动端与企业级系统开发">
+    <title>毛际可 · 前端工程师</title>
+    <link rel="icon" type="image/x-icon" href="/subapps/resume/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <script crossorigin="">import('/subapps/resume/assets/index-brA86wAe.js').finally(() => {
+            
+    const qiankunLifeCycle = window.moudleQiankunAppLifeCycles && window.moudleQiankunAppLifeCycles['resume'];
+    if (qiankunLifeCycle) {
+      window.proxy.vitemount((props) => qiankunLifeCycle.mount(props));
+      window.proxy.viteunmount((props) => qiankunLifeCycle.unmount(props));
+      window.proxy.vitebootstrap(() => qiankunLifeCycle.bootstrap());
+      window.proxy.viteupdate((props) => qiankunLifeCycle.update(props));
+    }
+  
+          })</script>
+    <link rel="stylesheet" crossorigin="" href="/subapps/resume/assets/index-DZIrnD1Q.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  
+
+<script>
+  const createDeffer = (hookName) => {
+    const d = new Promise((resolve, reject) => {
+      window.proxy && (window.proxy[`vite${hookName}`] = resolve)
+    })
+    return props => d.then(fn => fn(props));
+  }
+  const bootstrap = createDeffer('bootstrap');
+  const mount = createDeffer('mount');
+  const unmount = createDeffer('unmount');
+  const update = createDeffer('update');
+
+  ;(global => {
+    global.qiankunName = 'resume';
+    global['resume'] = {
+      bootstrap,
+      mount,
+      unmount,
+      update
+    };
+  })(window);
+</script></body></html>

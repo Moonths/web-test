@@ -10,10 +10,12 @@
     "dev:admin": "pnpm --filter @resume/admin dev",
     "dev:dashboard": "pnpm --filter @resume/dashboard dev",
     "build": "pnpm -r run build",
-    "build:portal": "pnpm --filter portal build",
+    "build:portal": "bash scripts/build-subapps.sh && pnpm --filter portal build",
+    "build:portal:fast": "pnpm --filter portal build",
     "build:resume": "pnpm --filter @resume/resume build",
     "build:admin": "pnpm --filter @resume/admin build",
     "build:dashboard": "pnpm --filter @resume/dashboard build",
+    "clean:subapps": "rm -rf portal/public/subapps",
     "lint": "pnpm -r run lint",
     "clean": "pnpm -r exec rm -rf dist node_modules",
     "dev:all": "pnpm --parallel --filter portal --filter @resume/resume --filter @resume/dashboard run dev"

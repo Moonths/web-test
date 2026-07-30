@@ -5,8 +5,11 @@ import { fileURLToPath, URL } from 'node:url'
 
 const useDevMode = true
 
+// 生产构建时通过环境变量覆盖 base 路径
+const prodBase = process.env.VITE_BASE || '/subapps/dashboard/'
+
 export default defineConfig({
-  base: '/',
+  base: process.env.NODE_ENV === 'production' ? prodBase : '/',
   plugins: [
     vue(),
     qiankun('dashboard', { useDevMode }),

@@ -3,6 +3,7 @@
  * 左镜：电脑桌 GLB 模型（computer__desk.glb）
  * 右镜：白板 GLB 模型（whiteboard.glb）
  *      带点击提示光环 + 流程图绘画动画
+ *      带不可见点击区域（rightClickZone）
  */
 
 import * as THREE from 'three'
@@ -16,6 +17,8 @@ export interface MirrorObjects {
   leftMirror: THREE.Group
   rightMirror: THREE.Group
   rightSurface: THREE.Mesh | null
+  /** 不可见的点击区域网格（白板前的大平面），始终可用 */
+  rightClickZone: THREE.Mesh
   rightHintRing: THREE.Group
   update: (delta: number, elapsed: number) => void
   dispose: () => void
@@ -236,11 +239,29 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
     },
   )
 
-  // --- 右镜：白板模型 + 流程图动画 ---
+  // --- 右镜：白板模型 + 流程图动画 + 不可见点击区域 ---
   const rightMirror = new THREE.Group()
   let rightSurface: THREE.Mesh | null = null
   placeOnFloor(rightMirror, MIRROR_SLOTS.right.x, MIRROR_SLOTS.right.z)
   scene.add(rightMirror)
+
+  // ---- 创建不可见的点击区域（始终存在，不依赖 GLB 加载） ----
+  const clickZoneGeo = new THREE.PlaneGeometry(8, 6)
+  const clickZoneMat = new THREE.MeshBasicMaterial({
+    visible: false,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  })
+  const rightClickZone = new THREE.Mesh(clickZoneGeo, clickZoneMat)
+  // 定位到白板预期位置
+  const dir = facingDirection(MIRROR_SLOTS.right.x, MIRROR_SLOTS.right.z)
+  rightClickZone.position.set(
+    MIRROR_SLOTS.right.x + dir.x * 3.5,
+    5.5,
+    MIRROR_SLOTS.right.z + dir.z * 3.5,
+  )
+  rightClickZone.lookAt(0, 5.5, 0)
+  scene.add(rightClickZone)
 
   // 流程图动画状态
   let fcCanvas: HTMLCanvasElement | null = null
@@ -283,7 +304,6 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
         }
       })
       if (!boardSurface) {
-        // 回退：找 board_3 节点下的任何 Mesh
         model.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             const p = child.parent
@@ -298,16 +318,11 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
         const ctx = canvas.getContext('2d')!
         ctx.clearRect(0, 0, FC_CANVAS_W, FC_CANVAS_H)
 
-        // 透明背景，让白板的白色透出来
-        //（留空即可，clearRect 已清除）
-
         const texture = new THREE.CanvasTexture(canvas)
-        texture.offset.x = 0.01  // 左移8px (8/800)
+        texture.offset.x = 0.01
         texture.needsUpdate = true
 
-        // 用 board_3 的世界变换定位叠加层
         const overlayGeo = new THREE.PlaneGeometry(7.08, 4.5)
-
         const overlayMat = new THREE.MeshBasicMaterial({
           map: texture,
           transparent: true,
@@ -315,27 +330,18 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
           depthTest: false,
           side: THREE.DoubleSide,
         })
-
         const overlay = new THREE.Mesh(overlayGeo, overlayMat)
-        // 用 board_3 的世界变换定位
         const board3 = model.getObjectByName('board_3')
         if (board3) {
           const wp = new THREE.Vector3()
           board3.getWorldPosition(wp)
           const wq = new THREE.Quaternion()
           board3.getWorldQuaternion(wq)
-          
           overlay.position.copy(wp)
-          // 沿白板法线(+X in board_3 local)前移
           const fwd = new THREE.Vector3(0.4, 0, 0).applyQuaternion(wq)
           overlay.position.add(fwd)
-          
-          // 复制 board_3 世界旋转，然后旋转让平面 -(Y?Z?) 朝 +X
           overlay.quaternion.copy(wq)
-          // PlaneGeometry 法线是 -Z，需要转到 board_3 的 +X
-          // 在局部坐标中旋转 +PI/2 使 -Z → +X
           overlay.rotateY(-Math.PI / 2)
-          
           overlay.renderOrder = 999
           scene.add(overlay)
         } else {
@@ -359,11 +365,11 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
 
   // 右镜提示光环
   const rightHintRing = createHintRing()
-  const dir = facingDirection(MIRROR_SLOTS.right.x, MIRROR_SLOTS.right.z)
+  const hintDir = facingDirection(MIRROR_SLOTS.right.x, MIRROR_SLOTS.right.z)
   rightHintRing.position.set(
-    MIRROR_SLOTS.right.x + dir.x * 0.8,
+    MIRROR_SLOTS.right.x + hintDir.x * 0.8,
     HINT_BASE_Y,
-    MIRROR_SLOTS.right.z + dir.z * 0.8,
+    MIRROR_SLOTS.right.z + hintDir.z * 0.8,
   )
   rightHintRing.lookAt(0, HINT_BASE_Y, 0)
   scene.add(rightHintRing)
@@ -378,27 +384,21 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
 
     const W = FC_CANVAS_W, H = FC_CANVAS_H
     const ctx = fcCtx
-
-    // 清除画布
     ctx.clearRect(0, 0, W, H)
 
-    // 整体下移10px，修正上方留白过多下方留白不足的问题
     ctx.save()
     ctx.translate(0, 10)
 
-    // 计算当前进度 (0-1)，循环
     const t = (elapsed % FC_TOTAL) / FC_TOTAL
 
-    // 遍历绘制可见步骤
     for (const step of fcSteps) {
       const localT = t - step.tStart
-      if (localT < 0) continue // 还没到
+      if (localT < 0) continue
       const progress = Math.min(localT / step.tDur, 1)
       step.draw(ctx, progress)
     }
 
     ctx.restore()
-
     fcTexture.needsUpdate = true
   }
 
@@ -407,13 +407,16 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
     scene.remove(leftMirror)
     scene.remove(rightMirror)
     scene.remove(rightHintRing)
+    scene.remove(rightClickZone)
     disposeGroup(leftMirror)
     disposeGroup(rightMirror)
     disposeGroup(rightHintRing)
+    clickZoneGeo.dispose()
+    clickZoneMat.dispose()
     if (fcTexture) fcTexture.dispose()
   }
 
-  return { leftMirror, rightMirror, rightSurface, rightHintRing, update, dispose }
+  return { leftMirror, rightMirror, rightSurface, rightClickZone, rightHintRing, update, dispose }
 }
 
 // ====== 工具函数 ======
