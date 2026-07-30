@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useScrollSpy } from '@/composables/useScrollSpy'
+import { useScrollSpy } from '../../composables/useScrollSpy'
 
 const isScrolled = ref(false)
 const menuOpen = ref(false)

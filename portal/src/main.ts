@@ -1,7 +1,9 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import '@resume/shared/tokens'
-import '@/styles/exhibition.css'
-
-const app = createApp(App)
-app.mount('#app')
+ import { createApp } from 'vue'
+ import App from './App.vue'
+ import router from './router'
+ import '@resume/shared/tokens'
+ import '@/styles/exhibition.css'
+ 
+ const app = createApp(App)
+ app.use(router)
+ app.mount('#app')

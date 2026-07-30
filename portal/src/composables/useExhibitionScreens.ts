@@ -86,6 +86,7 @@ export interface ScreenObjects {
   mainScreenGlow: THREE.Mesh
   projectScreens: THREE.Mesh[]
   hintRing: THREE.Group
+  mainSensor: THREE.Mesh
   update: (delta: number, elapsed: number) => void
   dispose: () => void
 }
@@ -217,6 +218,14 @@ export function useExhibitionScreens(state: HallSceneState): ScreenObjects {
   hintRing.position.set(MAIN_SCREEN.x, MAIN_SCREEN.y - sh / 2 + 1.2, MAIN_SCREEN.z + 0.5)
   scene.add(hintRing)
 
+  // 主屏幕：大范围不可见传感器，覆盖屏幕前方区域方便点击
+  const sensorGeoBig = new THREE.PlaneGeometry(sw * 1.6, sh * 1.6)
+  const sensorMatBig = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false })
+  const mainSensor = new THREE.Mesh(sensorGeoBig, sensorMatBig)
+  mainSensor.position.set(MAIN_SCREEN.x, MAIN_SCREEN.y, MAIN_SCREEN.z + 0.2)
+  mainSensor.name = 'main-screen-sensor'
+  scene.add(mainSensor)
+
   function update(delta: number, elapsed: number) {
     // 屏幕发光脉冲
     const pulse = 0.7 + Math.sin(elapsed * 1.5) * 0.3
@@ -240,13 +249,14 @@ export function useExhibitionScreens(state: HallSceneState): ScreenObjects {
     frameGeo.dispose()
     scene.remove(mainScreen)
     scene.remove(mainScreenGlow)
+    scene.remove(mainSensor)
     scene.remove(hintRing)
     for (const ps of projectScreens) {
       scene.remove(ps)
     }
   }
 
-  return { mainScreen, mainScreenGlow, projectScreens, hintRing, update, dispose }
+  return { mainScreen, mainScreenGlow, projectScreens, hintRing, mainSensor, update, dispose }
 }
 
 // ====== Canvas 纹理生成 ======

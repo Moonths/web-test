@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SkillCategory } from '@/data/resume'
+import type { SkillCategory } from '../../data/resume'
 defineProps<{ skill: SkillCategory }>()
 </script>
 

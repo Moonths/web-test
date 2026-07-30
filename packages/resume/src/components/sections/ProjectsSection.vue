@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { projects } from '@/data/resume'
-import ProjectCard from '@/components/ui/ProjectCard.vue'
+import { projects } from '../../data/resume'
+import ProjectCard from '../ui/ProjectCard.vue'
 </script>
 
 <template>

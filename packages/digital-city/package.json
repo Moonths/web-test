@@ -11,7 +11,8 @@
   "dependencies": {
     "@resume/shared": "workspace:*",
     "three": "^0.168.0",
-    "vue": "^3.4.27"
+    "vue": "^3.4.27",
+    "@resume/dashboard": "workspace:*"
   },
   "devDependencies": {
     "@types/three": "^0.185.0",

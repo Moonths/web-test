@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import * as THREE from 'three'
-import { loadMicroApp } from 'qiankun'
 import { useExhibitionHall } from '@/composables/useExhibitionHall'
 import { useCharacter } from '@/composables/useCharacter'
 import { useExhibitionScreens } from '@/composables/useExhibitionScreens'
@@ -16,10 +16,11 @@ import { useCeilingFlow } from '@/composables/useCodeFlow'
 import type { CodeFlowResult } from '@/composables/useCodeFlow'
 import type { CeilingFlowResult } from '@/composables/useCodeFlow'
 
+const router = useRouter()
+const route = useRoute()
+
 const canvasContainer = ref<HTMLElement | null>(null)
 const showHint = ref(true)
-const activeOverlay = ref<'resume' | 'dashboard' | null>(null)
-let currentMicroApp: any = null
 
 // Joystick state
 const jActive = ref(false)
@@ -71,31 +72,8 @@ let orbitCamera: OrbitCamera | null = null
 let codeFlow: CodeFlowResult | null = null
 let ceilingFlow: CeilingFlowResult | null = null
 
-function unmountCurrentMicroApp() {
-  if (currentMicroApp) { currentMicroApp.unmount(); currentMicroApp = null }
-}
-
-function showResume() {
-  unmountCurrentMicroApp()
-  activeOverlay.value = 'resume'
-  showHint.value = false
-  nextTick(() => {
-    currentMicroApp = loadMicroApp({ name: 'resume', entry: '//localhost:5173', container: '#subapp-viewport' })
-  })
-}
-
-function showDashboard() {
-  unmountCurrentMicroApp()
-  activeOverlay.value = 'dashboard'
-  showHint.value = false
-  nextTick(() => {
-    currentMicroApp = loadMicroApp({ name: 'dashboard', entry: '//localhost:5176', container: '#subapp-viewport' })
-  })
-}
-
 function closeOverlay() {
-  unmountCurrentMicroApp()
-  activeOverlay.value = null
+  router.push('/')
 }
 
 onMounted(() => {
@@ -131,20 +109,26 @@ onMounted(() => {
 
   const raycaster = new THREE.Raycaster(); const mouse = new THREE.Vector2()
   function onCanvasClick(e: MouseEvent) {
-    if (!state || !screens || activeOverlay.value) return
+    if (!state || !screens || route.path !== '/') return
     const rect = canvasContainer.value!.getBoundingClientRect()
     mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1; mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
     raycaster.setFromCamera(mouse, state.camera)
-    const mainHits = raycaster.intersectObjects([screens.mainScreen, screens.mainScreenGlow, ...screens.hintRing.children], true)
-    if (mainHits.length > 0) { showResume(); return }
+    // 先检测白板（右侧），再检测主屏幕——避免误触
     if (mirrors) {
-      const wbHits = raycaster.intersectObjects([mirrors.rightSurface, ...mirrors.rightHintRing.children].filter(Boolean) as THREE.Object3D[], true)
-      if (wbHits.length > 0) { showDashboard(); return }
+      const wbHits = raycaster.intersectObjects(
+        [mirrors.rightMirror, mirrors.rightSensor, ...mirrors.rightHintRing.children].filter(Boolean) as THREE.Object3D[], true,
+      )
+      if (wbHits.length > 0) { router.push('/dashboard'); return }
     }
+    // 主屏幕检测（含大面积传感器 + 屏幕本体 + 光晕 + 提示环）
+    const mainHits = raycaster.intersectObjects(
+      [screens.mainScreen, screens.mainScreenGlow, screens.mainSensor, ...screens.hintRing.children], true,
+    )
+    if (mainHits.length > 0) { router.push('/resume'); return }
   }
   function onKeyDown(e: KeyboardEvent) {
-    if ((e.key === 'Enter' || e.key === 'e' || e.key === 'E') && !activeOverlay.value) { showResume(); return }
-    if (e.key === 'Escape' && activeOverlay.value) closeOverlay()
+    if ((e.key === 'Enter' || e.key === 'e' || e.key === 'E') && route.path === '/') { router.push('/resume'); return }
+    if (e.key === 'Escape' && route.path !== '/') closeOverlay()
   }
   state.renderer.domElement.addEventListener('click', onCanvasClick)
   let _md = false, _msx = 0, _msy = 0
@@ -162,7 +146,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  unmountCurrentMicroApp()
   const state = getState()
   if (state?.scene.userData.cleanup) (state.scene.userData.cleanup as () => void)()
   orbitCamera?.dispose(); character?.dispose(); screens?.dispose(); mirrors?.dispose()
@@ -174,8 +157,9 @@ onBeforeUnmount(() => {
   <div class="exhibition-root">
     <div ref="canvasContainer" class="exhibition-canvas" />
 
+    <!-- 3D 场景提示——仅在主路由显示 -->
     <Transition name="hint-fade">
-      <div v-if="showHint && !activeOverlay" class="exhibition-hint">
+      <div v-if="showHint && route.path === '/'" class="exhibition-hint">
         <div class="hint-text">拖拽鼠标旋转视角 · 滚轮缩放 · 点击屏幕查看简历</div>
         <div class="hint-keys">
           <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
@@ -187,7 +171,8 @@ onBeforeUnmount(() => {
       </div>
     </Transition>
 
-    <div class="joystick-container" v-show="!activeOverlay"
+    <!-- 摇杆——仅在主路由显示 -->
+    <div class="joystick-container" v-show="route.path === '/'"
          @touchstart="onJoystickStart" @touchmove="onJoystickMove"
          @touchend="onJoystickEnd" @touchcancel="onJoystickEnd">
       <div class="joystick-base">
@@ -195,20 +180,19 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <!-- ===== 微前端子应用覆盖层 ===== -->
-    <Transition name="fs-overlay">
-      <div v-if="activeOverlay" class="exhibition-overlay">
-        <div class="overlay-content">
+    <!-- ===== 路由覆盖层 ===== -->
+    <router-view v-slot="{ Component, route: r }">
+      <transition name="fs-overlay">
+        <div v-if="r.path !== '/'" class="exhibition-overlay" :key="r.path">
           <button class="overlay-close" @click="closeOverlay" title="关闭 (Esc)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
-          <!-- qiankun 子应用挂载点 -->
-          <div id="subapp-viewport"></div>
+          <component :is="Component" />
         </div>
-      </div>
-    </Transition>
+      </transition>
+    </router-view>
   </div>
 </template>
 
@@ -229,8 +213,7 @@ html, body, #app { width: 100%; height: 100%; overflow: hidden; background: #000
 .hint-fade-enter-active { transition: opacity 0.5s ease; }
 .hint-fade-leave-active { transition: opacity 0.3s ease; }
 .hint-fade-enter-from, .hint-fade-leave-to { opacity: 0; }
-.exhibition-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow-y: auto; display: flex; justify-content: center; }
-.overlay-content { width: 100%; max-width: 900px; padding: 60px 40px 80px; position: relative; }
+.exhibition-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow-y: auto; }
 .overlay-close { position: fixed; top: 20px; right: 20px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #64748b; cursor: pointer; transition: all 0.2s; z-index: 101; }
 .overlay-close:hover { background: rgba(255,255,255,0.1); color: #f1f5f9; }
 .fs-overlay-enter-active { transition: opacity 0.5s ease; }
@@ -240,8 +223,4 @@ html, body, #app { width: 100%; height: 100%; overflow: hidden; background: #000
 .joystick-base { width: 100%; height: 100%; border-radius: 50%; background: rgba(15,23,42,0.45); border: 2px solid rgba(129,140,248,0.25); display: flex; align-items: center; justify-content: center; position: relative; }
 .joystick-thumb { width: 48px; height: 48px; border-radius: 50%; background: radial-gradient(circle, rgba(129,140,248,0.6), rgba(79,70,229,0.4)); border: 2px solid rgba(129,140,248,0.5); position: absolute; transition: none; }
 @media (pointer: fine) { .joystick-container { display: none; } }
-
-/* subapp-viewport: 子应用容器 */
-#subapp-viewport { width: 100%; min-height: 100%; }
-#subapp-viewport > .rw-root { max-width: 900px; margin: 0 auto; }
 </style>

@@ -2,7 +2,7 @@
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
-import { useChat } from '@/composables/useChat'
+import { useChat } from '../composables/useChat'
 import CtaCard from './CtaCard.vue'
 import InterestForm from './InterestForm.vue'
 import BookingForm from './BookingForm.vue'

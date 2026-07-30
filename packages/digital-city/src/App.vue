@@ -14,9 +14,10 @@ import { useCodeFlow } from '@/composables/useCodeFlow'
 import { useCeilingFlow } from '@/composables/useCodeFlow'
 import type { CodeFlowResult } from '@/composables/useCodeFlow'
 import type { CeilingFlowResult } from '@/composables/useCodeFlow'
+import DashboardApp from '@resume/dashboard/src/App.vue'
 
 const canvasContainer = ref<HTMLElement | null>(null)
-const isFullscreen = ref(false)
+const activeOverlay = ref<'none' | 'resume' | 'dashboard'>('none')
 const showHint = ref(true)
 
 // 摇杆状态
@@ -188,17 +189,16 @@ onMounted(() => {
   })
 
   // 调试：暴露对象引用用于浏览器控制台调试
-  ;(window as any).__debugTrigger = triggerFullscreen
-  ;(window as any).__debugScreens = screens
+    ;(window as any).__debugScreens = screens
   ;(window as any).__debugState = state
-  ;(window as any).__debugIsFullscreen = isFullscreen
+  
 
   // 点击检测 — 主屏幕 & 提示环
   const raycaster = new THREE.Raycaster()
   const mouse = new THREE.Vector2()
 
   function onCanvasClick(e: MouseEvent) {
-    if (!state || !screens || isFullscreen.value) {
+    if (!state || !screens || activeOverlay.value !== 'none') {
       return
     }
 
@@ -213,25 +213,42 @@ onMounted(() => {
         screens.mainScreenGlow,
         ...screens.hintRing.children,
         // 右侧魔镜（含提示环）与主屏幕行为一致；左镜为纯反射镜，不可点击
-        // 过滤掉可能的 null 值（如 mirrors.rightSurface 始终为 null）
+        // 过滤掉可能的 null 值
         ...(mirrors ? [mirrors.rightSurface, ...mirrors.rightHintRing.children].filter(Boolean) : []),
-      ],
+      ].filter(Boolean) as THREE.Object3D[],
       true,
     )
 
     if (intersects.length > 0) {
-      triggerFullscreen()
+      const hit = intersects[0].object
+      const isMainScreen = hit === (screens.mainScreen as any) ||
+        hit === (screens.mainScreenGlow as any) ||
+        screens.hintRing.children.includes(hit)
+      const isWhiteboard = mirrors && (
+        hit === (mirrors.rightSurface as any) ||
+        (mirrors.rightHintRing && mirrors.rightHintRing.children.includes(hit))
+      )
+      if (isMainScreen) {
+        activeOverlay.value = 'resume'
+      } else if (isWhiteboard) {
+        activeOverlay.value = 'dashboard'
+      } else {
+        activeOverlay.value = 'resume'
+      }
+      showHint.value = false
     }
   }
 
   // Enter 聚焦，Esc 退出
   function onKeyDown(e: KeyboardEvent) {
-    if ((e.key === 'Enter' || e.key === 'e' || e.key === 'E') && !isFullscreen.value) {
-      triggerFullscreen()
+    if ((e.key === 'Enter' || e.key === 'e' || e.key === 'E') && activeOverlay.value === 'none') {
+      activeOverlay.value = 'resume'
+      showHint.value = false
       return
     }
-    if (e.key === 'Escape' && isFullscreen.value) {
-      exitFullscreen()
+    if (e.key === 'Escape' && activeOverlay.value !== 'none') {
+      activeOverlay.value = 'none'
+      showHint.value = false
     }
   }
 
@@ -281,7 +298,7 @@ onMounted(() => {
 
   // 8 秒后淡化提示
   setTimeout(() => {
-    if (!isFullscreen.value) showHint.value = false
+    if (activeOverlay.value === 'none') showHint.value = false
   }, 8000)
 })
 
@@ -299,15 +316,7 @@ onBeforeUnmount(() => {
   destroy()
 })
 
-function triggerFullscreen() {
-  isFullscreen.value = true
-  showHint.value = false
-}
 
-function exitFullscreen() {
-  isFullscreen.value = false
-  showHint.value = false
-}
 </script>
 
 <template>
@@ -316,7 +325,7 @@ function exitFullscreen() {
 
     <!-- 操作提示 -->
     <Transition name="hint-fade">
-      <div v-if="showHint && !isFullscreen" class="exhibition-hint">
+      <div v-if="showHint && activeOverlay === 'none'" class="exhibition-hint">
         <div class="hint-text">拖拽鼠标旋转视角 · 滚轮缩放 · 点击屏幕查看简历</div>
         <div class="hint-keys">
           <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
@@ -330,7 +339,7 @@ function exitFullscreen() {
     </Transition>
 
     <!-- 摇杆（移动端触控） -->
-    <div class="joystick-container" v-show="!isFullscreen"
+    <div class="joystick-container" v-show="activeOverlay === 'none'"
          @touchstart="onJoystickStart"
          @touchmove="onJoystickMove"
          @touchend="onJoystickEnd"
@@ -344,9 +353,9 @@ function exitFullscreen() {
 
     <!-- 全屏简历覆盖层 -->
     <Transition name="fs-overlay">
-      <div v-if="isFullscreen" class="exhibition-overlay">
+      <div v-if="activeOverlay === 'resume'" class="exhibition-overlay">
         <div class="overlay-content">
-          <button class="overlay-close" @click="exitFullscreen" title="关闭 (Esc)">
+          <button class="overlay-close" @click="activeOverlay = 'none'" title="关闭 (Esc)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -421,19 +430,25 @@ function exitFullscreen() {
         </div>
       </div>
     </Transition>
+
+    <!-- 全屏数据大屏覆盖层 -->
+    <Transition name="fs-overlay">
+      <div v-if="activeOverlay === 'dashboard'" class="exhibition-overlay db-overlay">
+        <button class="overlay-close" @click="activeOverlay = 'none'" title="关闭 (Esc)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <DashboardApp />
+      </div>
+    </Transition>
   </div>
 </template>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
 html, body, #app {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   overflow: hidden;
   background: #000;
   font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -526,11 +541,12 @@ html, body, #app {
   overflow-y: auto;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .overlay-content {
   width: 100%;
-  max-width: 900px;
+  min-height: 100%;
   padding: 60px 40px 80px;
 }
 
@@ -557,7 +573,7 @@ html, body, #app {
 }
 
 /* 简历全屏内容 */
-.resume-full { color: #e2e8f0; }
+.resume-full { max-width: 900px; margin: 0 auto; color: #e2e8f0; }
 .resume-header { text-align: center; margin-bottom: 48px; }
 
 .resume-accent {
@@ -638,6 +654,13 @@ html, body, #app {
 .fs-overlay-leave-active { transition: opacity 0.3s ease; }
 .fs-overlay-enter-from,
 .fs-overlay-leave-to { opacity: 0; }
+
+/* ═══ 数据大屏覆盖层 ═══ */
+.db-overlay {
+  padding: 0 !important;
+  width: 100%;
+  height: 100%;
+}
 
 /* 摇杆 */
 .joystick-container {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { experience } from '@/data/resume'
-import TimelineItem from '@/components/ui/TimelineItem.vue'
+import { experience } from '../../data/resume'
+import TimelineItem from '../ui/TimelineItem.vue'
 </script>
 
 <template>

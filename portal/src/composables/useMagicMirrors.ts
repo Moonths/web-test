@@ -17,6 +17,7 @@ export interface MirrorObjects {
   rightMirror: THREE.Group
   rightSurface: THREE.Mesh | null
   rightHintRing: THREE.Group
+  rightSensor: THREE.Mesh
   update: (delta: number, elapsed: number) => void
   dispose: () => void
 }
@@ -357,7 +358,21 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
     },
   )
 
-  // 右镜提示光环
+  // 右镜：添加一个不可见的感应平面，方便点击
+  const sensorGeo = new THREE.PlaneGeometry(3.5, 3.5)
+  const sensorMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false })
+  const rightSensor = new THREE.Mesh(sensorGeo, sensorMat)
+  const dir2 = facingDirection(MIRROR_SLOTS.right.x, MIRROR_SLOTS.right.z)
+  rightSensor.position.set(
+    MIRROR_SLOTS.right.x + dir2.x * 1.2,
+    HINT_BASE_Y,
+    MIRROR_SLOTS.right.z + dir2.z * 1.2,
+  )
+  rightSensor.lookAt(0, HINT_BASE_Y, 0)
+  rightSensor.name = 'dashboard-sensor'
+  scene.add(rightSensor)
+
+  // 右镜提示光环（放大以便点击）
   const rightHintRing = createHintRing()
   const dir = facingDirection(MIRROR_SLOTS.right.x, MIRROR_SLOTS.right.z)
   rightHintRing.position.set(
@@ -407,13 +422,16 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
     scene.remove(leftMirror)
     scene.remove(rightMirror)
     scene.remove(rightHintRing)
+    scene.remove(rightSensor)
     disposeGroup(leftMirror)
     disposeGroup(rightMirror)
     disposeGroup(rightHintRing)
+    if (rightSensor.geometry) rightSensor.geometry.dispose()
+    if (rightSensor.material) (rightSensor.material as THREE.Material).dispose()
     if (fcTexture) fcTexture.dispose()
   }
 
-  return { leftMirror, rightMirror, rightSurface, rightHintRing, update, dispose }
+  return { leftMirror, rightMirror, rightSurface, rightHintRing, rightSensor, update, dispose }
 }
 
 // ====== 工具函数 ======

@@ -14,6 +14,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@resume/dashboard': fileURLToPath(new URL('../dashboard', import.meta.url)),
     },
   },
   server: {

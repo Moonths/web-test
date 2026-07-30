@@ -49,8 +49,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useMatrixRain } from '@/composables/useMatrixRain'
-import { use3DScene } from '@/composables/use3DScene'
+import { useMatrixRain } from '../../composables/useMatrixRain'
+import { use3DScene } from '../../composables/use3DScene'
 
 const heroRef    = ref<HTMLElement | null>(null)
 const subtitleRef = ref<HTMLElement | null>(null)

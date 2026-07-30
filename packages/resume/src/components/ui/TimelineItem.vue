@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TimelineItem } from '@/data/resume'
+import type { TimelineItem } from '../../data/resume'
 defineProps<{ item: TimelineItem }>()
 </script>
 

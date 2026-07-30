@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { skills } from '@/data/resume'
-import SkillCard from '@/components/ui/SkillCard.vue'
+import { skills } from '../../data/resume'
+import SkillCard from '../ui/SkillCard.vue'
 </script>
 
 <template>
