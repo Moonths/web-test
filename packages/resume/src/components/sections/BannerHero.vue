@@ -53,6 +53,7 @@ onUnmounted(() => {
 })
 
 function onKeyClick(label: string) {
+  if (!label) return  // 空格键不触发动画
   pressedKey.value = label
   if (pressTimer) clearTimeout(pressTimer)
   pressTimer = window.setTimeout(() => { pressedKey.value = '' }, 300)
