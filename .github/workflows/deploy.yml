@@ -22,10 +22,12 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Rebuild esbuild native binary
         run: |
-          export PNPM_HOME="/home/runner/setup-pnpm/node_modules/.bin"
-          pnpm config set pnpm.onlyBuiltDependencies '["esbuild","vue-demi"]' --location project
-          pnpm install --frozen-lockfile
+          cd node_modules/.pnpm/esbuild@0.20.1/node_modules/esbuild
+          node install.js
 
       - name: Build portal (includes resume + dashboard sub-apps)
         run: pnpm build:portal
