@@ -6,7 +6,7 @@ const typedCmd = ref('')
 const typedName = ref('')
 const typedTags = ref('')
 const showDesc = ref(false)
-const pressedKey = ref('')
+const pressedKey = ref<string | null>(null)
 let pressTimer: number | null = null
 
 const fullCmd = 'Who Am I ?'
@@ -55,7 +55,7 @@ onUnmounted(() => {
 function onKeyClick(label: string) {
   pressedKey.value = label
   if (pressTimer) clearTimeout(pressTimer)
-  pressTimer = window.setTimeout(() => { pressedKey.value = '' }, 300)
+  pressTimer = window.setTimeout(() => { pressedKey.value = null }, 300)
 }
 
 function scaleBanner() {
@@ -347,7 +347,7 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
   gap: 3px;
   width: 812px;
   max-width: 100%;
-  padding: 0 8px;
+  padding: 60px 8px;
 }
 
 .banner__cmd-line--sm {
