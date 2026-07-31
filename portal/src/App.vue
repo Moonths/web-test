@@ -86,10 +86,18 @@ function unmountCurrentMicroApp() {
 }
 
 // 环境感知的 qiankun entry URL
-const RESUME_ENTRY = import.meta.env.DEV ? '//localhost:5173' : '/subapps/resume/index.html'
-const DASHBOARD_ENTRY = import.meta.env.DEV ? '//localhost:5199' : '/subapps/dashboard/index.html'
+const RESUME_ENTRY = import.meta.env.DEV
+  ? (import.meta.env.VITE_RESUME_URL || '//localhost:5201')
+  : '/subapps/resume/index.html'
+const DASHBOARD_ENTRY = import.meta.env.DEV
+  ? (import.meta.env.VITE_DASHBOARD_URL || '//localhost:5202')
+  : '/subapps/dashboard/index.html'
 
 function loadSubApp(name: 'resume' | 'dashboard') {
+  // 允许 body 滚动（替代 overlay 自身的 overflow-y: auto）
+  document.body.style.overflow = 'auto'
+  document.documentElement.style.overflow = 'auto'
+
   overlayError.value = ''
   overlayLoading.value = true
   unmountCurrentMicroApp()
@@ -123,6 +131,20 @@ function loadSubApp(name: 'resume' | 'dashboard') {
         .then(() => {
           overlayLoading.value = false
           if (mountTimeout) { clearTimeout(mountTimeout); mountTimeout = null }
+          // 诊断：检查 qiankun 插入的 wrapper 是否有干扰 sticky 的 CSS
+          setTimeout(() => {
+            const vp = document.querySelector('#subapp-viewport')
+            if (vp) {
+              let el: HTMLElement | null = vp.firstElementChild as HTMLElement | null
+              const chain: string[] = []
+              while (el && chain.length < 8) {
+                const cs = getComputedStyle(el)
+                chain.push(`${el.tagName.toLowerCase()}${el.id ? '#'+el.id : ''}${el.className ? '.'+el.className.split(' ')[0] : ''} overflow:${cs.overflow} overflow-y:${cs.overflowY} display:${cs.display} height:${cs.height}`)
+                el = el.firstElementChild as HTMLElement | null
+              }
+              console.log('[sticky-debug] DOM chain inside #subapp-viewport:\n' + chain.join('\n'))
+            }
+          }, 500)
         })
         .catch((err: any) => {
           overlayLoading.value = false
@@ -140,11 +162,14 @@ function loadSubApp(name: 'resume' | 'dashboard') {
 }
 
 function closeOverlay() {
+  // 恢复 3D 场景的 overflow: hidden
+  document.body.style.overflow = 'hidden'
+  document.documentElement.style.overflow = 'hidden'
+
   unmountCurrentMicroApp()
   overlayLoading.value = false
   overlayError.value = ''
   activeOverlay.value = null
-  // 路由回退到首页
   if (route.name !== 'home') {
     router.push('/')
   }
@@ -366,9 +391,9 @@ html, body, #app { width: 100%; height: 100%; overflow: hidden; background: #000
 .hint-fade-enter-active { transition: opacity 0.5s ease; }
 .hint-fade-leave-active { transition: opacity 0.3s ease; }
 .hint-fade-enter-from, .hint-fade-leave-to { opacity: 0; }
-.exhibition-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow-y: auto; display: flex; justify-content: center; }
-.overlay-content { width: 100%; max-width: 900px; padding: 60px 40px 80px; position: relative; }
-.overlay-content.db-content { max-width: none; padding: 60px 12px 40px; }
+.exhibition-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow: hidden; display: flex; flex-direction: column; }
+.overlay-content { width: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.overlay-content.db-content { padding: 60px 12px 40px; }
 .overlay-close { position: fixed; top: 20px; right: 20px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #64748b; cursor: pointer; transition: all 0.2s; z-index: 101; }
 .overlay-close:hover { background: rgba(255,255,255,0.1); color: #f1f5f9; }
 .fs-overlay-enter-active { transition: opacity 0.5s ease; }
@@ -380,8 +405,13 @@ html, body, #app { width: 100%; height: 100%; overflow: hidden; background: #000
 @media (pointer: fine) { .joystick-container { display: none; } }
 
 /* subapp-viewport: 子应用容器 */
-#subapp-viewport { width: 100%; min-height: 100%; }
+#subapp-viewport { width: 100%; flex: 1; overflow-y: auto; overflow-x: hidden; }
 #subapp-viewport.db-viewport { max-width: none; }
+
+/* 确保 qiankun wrapper 不会创建新的滚动容器破坏 sticky */
+#subapp-viewport > *,
+#subapp-viewport > * > *,
+#subapp-viewport > * > * > * { overflow: visible !important; }
 
 /* 加载 & 错误状态 */
 .overlay-status {

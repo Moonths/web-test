@@ -11,34 +11,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: |
-            frontend/package-lock.json
-            admin/package-lock.json
+          cache: 'pnpm'
 
-      - name: Build frontend
-        run: cd frontend && npm ci && npm run build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build portal (includes resume + dashboard sub-apps)
+        run: pnpm build:portal
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_ADMIN_USERNAME: ${{ secrets.VITE_ADMIN_USERNAME }}
           VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD }}
 
       - name: Build admin
-        run: cd admin && npm ci && npm run build
+        run: pnpm --filter @resume/admin build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
-      - name: Upload frontend dist
+      - name: Upload portal dist
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.ECS_HOST }}
           username: ${{ secrets.ECS_USER }}
           key: ${{ secrets.ECS_SSH_KEY }}
-          source: "frontend/dist"
-          target: "/var/www/resume-website/frontend"
+          source: "portal/dist"
+          target: "/var/www/resume-website/portal"
           strip_components: 1
 
       - name: Upload admin dist
@@ -47,11 +52,11 @@ jobs:
           host: ${{ secrets.ECS_HOST }}
           username: ${{ secrets.ECS_USER }}
           key: ${{ secrets.ECS_SSH_KEY }}
-          source: "admin/dist"
+          source: "packages/admin/dist"
           target: "/var/www/resume-website/admin"
-          strip_components: 1
+          strip_components: 2
 
-      - name: Deploy backend
+      - name: Update Nginx config & deploy backend
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.ECS_HOST }}
@@ -60,6 +65,13 @@ jobs:
           script: |
             cd /var/www/resume-website
             git pull origin main
+
+            # 更新 Nginx 配置（路径指向 portal/dist + 子应用路由）
+            sudo cp nginx.conf /etc/nginx/nginx.conf
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            # 更新后端
             cd backend
             source venv/bin/activate
             pip install -r requirements.txt -q

@@ -123,10 +123,15 @@ function renderMarkdown(text: string): string {
 
 <template>
   <button class="ai-chat-btn" aria-label="打开 AI 助手" @click="toggleOpen">
-    <svg viewBox="0 0 16 16" fill="currentColor">
-      <path d="M8 1 9.3 6.7 15 8 9.3 9.3 8 15 6.7 9.3 1 8 6.7 6.7Z"/>
-    </svg>
-    <span class="ai-chat-btn__label">问问 AI</span>
+    <div class="ai-chat-btn__avatar">
+      <img
+        class="ai-chat-btn__photo"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%234F46E5'/%3E%3Ctext x='20' y='27' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold' font-size='18'%3EM%3C/text%3E%3C/svg%3E"
+        alt="AI 助手头像"
+      />
+      <span class="ai-chat-btn__dot" />
+    </div>
+    <span class="ai-chat-btn__label">问我任何问题</span>
   </button>
 
   <div class="ai-chat-panel" :class="{ 'is-open': isOpen }" :style="panelBottom ? { bottom: panelBottom } : {}" role="dialog" aria-label="AI 助手">

@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "毛际可个人技术展示平台 — 3D 展厅为基座，简历 & 数据大屏为覆盖层",
   "scripts": {
-    "dev": "pnpm --parallel --filter portal --filter @resume/resume --filter @resume/dashboard run dev",
+    "dev": "bash scripts/dev.sh",
     "dev:portal": "pnpm --filter portal dev",
     "dev:resume": "pnpm --filter @resume/resume dev",
     "dev:admin": "pnpm --filter @resume/admin dev",

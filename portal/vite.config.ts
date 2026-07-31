@@ -12,7 +12,7 @@ export default defineConfig({
   },
   assetsInclude: ['**/*.glb', '**/*.gltf'],
   server: {
-    port: 5100,
+    port: 5200,
     open: false,
     headers: {
       'Access-Control-Allow-Origin': '*',

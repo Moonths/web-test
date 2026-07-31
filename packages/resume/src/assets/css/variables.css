@@ -8,18 +8,18 @@
   --color-primary-dark:  #4338CA;
   --color-primary-light: rgba(79, 70, 229, 0.12);
 
-  --color-accent:       #818CF8;
-  --color-accent-hover: #6366F1;
+  --color-accent:       #A5B4FC;
+  --color-accent-hover: #818CF8;
   --color-accent2:      #34D399;
 
-  --color-bg:            #0B1120;
-  --color-bg-alt:        #111827;
-  --color-surface:       #1F2937;
-  --color-border:        #1F2937;
+  --color-bg:            #080D1A;
+  --color-bg-alt:        #10172A;
+  --color-surface:       #1A2332;
+  --color-border:        #293548;
 
   --color-text:          #F1F5F9;
-  --color-text-soft:    #CBD5E1;
-  --color-text-muted:   #64748B;
+  --color-text-soft:    #E2E8F0;
+  --color-text-muted:   #94A3B8;
 
   --font-sans:           var(--shared-font-sans);
   --font-display:        var(--shared-font-display);
