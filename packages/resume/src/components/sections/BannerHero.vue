@@ -53,7 +53,6 @@ onUnmounted(() => {
 })
 
 function onKeyClick(label: string) {
-  if (!label) return  // 空格键不触发动画
   pressedKey.value = label
   if (pressTimer) clearTimeout(pressTimer)
   pressTimer = window.setTimeout(() => { pressedKey.value = '' }, 300)
@@ -120,6 +119,17 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
                   10年+企业级与 AI 原生应用开发经验，擅长 Vue3 全家桶及 TypeScript 工程化体系建设。具备跨端开发能力（uni-app / 小程序），主导过集团级 ERP 与仓储管理等复杂后台系统，同时具备 NestJS BFF 层开发能力。
                 </p>
               </Transition>
+              <div v-if="showDesc" class="banner__terminal-footer">
+                <div class="banner__cmd-line banner__cmd-line--sm">
+                  <span class="banner__prompt">➜</span>
+                  <span class="banner__path">~/tech-stack</span>
+                  <span class="banner__cmd">cat skills.json</span>
+                </div>
+                <div class="banner__output-json">❯ frontend: Vue3 · React · TypeScript · Three.js</div>
+                <div class="banner__output-json">❯ backend: Node.js · NestJS · Python · PostgreSQL</div>
+                <div class="banner__output-json">❯ mobile: uni-app · 微信小程序</div>
+                <div class="banner__output-json">❯ devops: Docker · CI/CD · Nginx · Alibaba Cloud</div>
+              </div>
             </div>
           </div>
         </div>
@@ -147,28 +157,6 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
         </div>
       </div>
 
-      <!-- Terminal Footer: 第二行命令输出 -->
-      <Transition name="fade-up">
-      <div v-if="showDesc" class="banner__terminal-footer">
-        <div class="banner__cmd-line banner__cmd-line--sm">
-          <span class="banner__prompt">➜</span>
-          <span class="banner__path">~/tech-stack</span>
-          <span class="banner__cmd">cat skills.json</span>
-        </div>
-        <div class="banner__output-json">
-          ❯ frontend: Vue3 · React · TypeScript · Three.js
-        </div>
-        <div class="banner__output-json">
-          ❯ backend: Node.js · NestJS · Python · PostgreSQL
-        </div>
-        <div class="banner__output-json">
-          ❯ mobile: uni-app · 微信小程序
-        </div>
-        <div class="banner__output-json">
-          ❯ devops: Docker · CI/CD · Nginx · Alibaba Cloud
-        </div>
-      </div>
-      </Transition>
 
     </div>
 
@@ -435,11 +423,12 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
 /* 按键弹起动效 */
 .banner__key--pressed {
   animation: key-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center center;
 }
 @keyframes key-pop {
-  0% { transform: scale(1); background: #2A2A30; color: var(--color-text-muted); border-color: #3D3D44; }
-  30% { transform: scale(1.8); background: var(--color-accent); color: #fff; border-color: var(--color-accent); z-index: 10; position: relative; }
-  100% { transform: scale(1); background: #2A2A30; color: var(--color-text-muted); border-color: #3D3D44; }
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.7); color: var(--color-accent); border-color: var(--color-accent); box-shadow: 0 0 14px rgba(99,102,241,0.5); }
+  100% { transform: scale(1); }
 }
 
 .banner__key--w52  { width: 52px; }
