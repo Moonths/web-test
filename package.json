@@ -23,11 +23,5 @@
   "engines": {
     "node": ">=22",
     "pnpm": ">=11"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "vue-demi"
-    ]
   }
 }
