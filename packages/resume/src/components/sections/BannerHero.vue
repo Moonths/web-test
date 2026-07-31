@@ -147,6 +147,29 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
         </div>
       </div>
 
+      <!-- Terminal Footer: 第二行命令输出 -->
+      <Transition name="fade-up">
+      <div v-if="showDesc" class="banner__terminal-footer">
+        <div class="banner__cmd-line banner__cmd-line--sm">
+          <span class="banner__prompt">➜</span>
+          <span class="banner__path">~/tech-stack</span>
+          <span class="banner__cmd">cat skills.json</span>
+        </div>
+        <div class="banner__output-json">
+          ❯ frontend: Vue3 · React · TypeScript · Three.js
+        </div>
+        <div class="banner__output-json">
+          ❯ backend: Node.js · NestJS · Python · PostgreSQL
+        </div>
+        <div class="banner__output-json">
+          ❯ mobile: uni-app · 微信小程序
+        </div>
+        <div class="banner__output-json">
+          ❯ devops: Docker · CI/CD · Nginx · Alibaba Cloud
+        </div>
+      </div>
+      </Transition>
+
     </div>
 
     <!-- Scroll hint -->
@@ -327,6 +350,30 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
   font-family: var(--font-sans);
   max-width: 100%;
   margin: 0;
+}
+
+/* ===== Terminal Footer ===== */
+.banner__terminal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 812px;
+  max-width: 100%;
+  padding: 0 8px;
+}
+
+.banner__cmd-line--sm {
+  font-size: 12px !important;
+  gap: 4px !important;
+}
+
+.banner__output-json {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(148, 163, 184, 0.55);
+  line-height: 1.6;
+  padding-left: 8px;
+  letter-spacing: 0.02em;
 }
 
 /* ===== Keyboard ===== */
