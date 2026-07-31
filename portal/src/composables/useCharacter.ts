@@ -14,6 +14,7 @@ export interface CharacterController {
   update: (delta: number, elapsed: number, cameraAzimuth: number) => void
   dispose: () => void
   getPosition: () => THREE.Vector3
+  loadPromise: Promise<void>
 }
 
 const MOVE_SPEED = 5.0
@@ -109,11 +110,13 @@ export function useCharacter(scene: THREE.Scene): CharacterController {
 
         // 初始不播放任何动画
       }
+      resolveLoad()
     },
     (p) => { if (p.total > 0) console.log('[Character]', Math.round(p.loaded/p.total*100), '%') },
     (err) => {
       console.error('[Character] Load failed:', err)
       group.add(createFallbackMesh())
+      resolveLoad()
     }
   )
 
@@ -194,7 +197,7 @@ export function useCharacter(scene: THREE.Scene): CharacterController {
     scene.remove(group)
   }
 
-  return { group, floorRing, update, dispose, getPosition: () => group.position.clone() }
+  return { group, floorRing, update, dispose, getPosition: () => group.position.clone(), loadPromise }
 }
 
 function createFloorRing(): THREE.Mesh {

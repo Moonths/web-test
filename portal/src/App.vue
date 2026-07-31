@@ -22,6 +22,9 @@ const route = useRoute()
 
 const canvasContainer = ref<HTMLElement | null>(null)
 const showHint = ref(true)
+const modelsLoaded = ref(false)
+const loadingProgress = ref(0)
+const loadingLabel = ref('正在初始化场景...')
 const activeOverlay = ref<'resume' | 'dashboard' | null>(null)
 const overlayLoading = ref(false)
 const overlayError = ref('')
@@ -198,6 +201,22 @@ onMounted(() => {
   character = useCharacter(state.scene)
   screens = useExhibitionScreens(state)
   mirrors = useMagicMirrors(state)
+
+  // 跟踪所有模型加载进度
+  const modelPromises = [character.loadPromise, mirrors.loadPromise]
+  let resolved = 0
+  const total = modelPromises.length
+  modelPromises.forEach((p, i) => {
+    p.then(() => {
+      resolved++
+      loadingProgress.value = Math.round((resolved / total) * 100)
+      if (i === 0) loadingLabel.value = '正在加载展厅模型...'
+      if (resolved >= total) {
+        setTimeout(() => { modelsLoaded.value = true }, 400)
+      }
+    })
+  })
+
   codeFlow = useCodeFlow(
     state.scene.userData.wallBack ?? null, state.scene.userData.wallFront ?? null,
     state.scene.userData.wallLeft ?? null, state.scene.userData.wallRight ?? null,
@@ -325,6 +344,20 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="exhibition-root">
+    <!-- Loading 界面 -->
+    <Transition name="load-fade">
+      <div v-if="!modelsLoaded" class="loading-screen">
+        <div class="loading-content">
+          <div class="loading-logo">MK</div>
+          <div class="loading-bar-track">
+            <div class="loading-bar-fill" :style="{ width: loadingProgress + '%' }"></div>
+          </div>
+          <div class="loading-label">{{ loadingLabel }}</div>
+          <div class="loading-hint">首次加载约需 3-8 秒，请耐心等待</div>
+        </div>
+      </div>
+    </Transition>
+
     <div ref="canvasContainer" class="exhibition-canvas" />
 
     <Transition name="hint-fade">
@@ -380,6 +413,49 @@ html, body, #app { width: 100%; height: 100%; overflow: hidden; background: #000
 </style>
 
 <style scoped>
+/* ===== Loading Screen ===== */
+.loading-screen {
+  position: fixed; inset: 0; z-index: 200;
+  background: #0a0a0f;
+  display: flex; align-items: center; justify-content: center;
+}
+.loading-content {
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
+}
+.loading-logo {
+  font-family: "Syne", "Inter", sans-serif;
+  font-size: 3rem; font-weight: 800; color: #818CF8;
+  letter-spacing: 0.15em;
+  animation: load-pulse 1.5s ease-in-out infinite;
+}
+@keyframes load-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.loading-bar-track {
+  width: 220px; height: 3px;
+  background: rgba(129,140,248,0.12);
+  border-radius: 3px; overflow: hidden;
+}
+.loading-bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #4F46E5, #818CF8);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+.loading-label {
+  font-size: 0.85rem; color: #64748b;
+  letter-spacing: 0.04em;
+}
+.loading-hint {
+  font-size: 0.7rem; color: #334155;
+  letter-spacing: 0.03em;
+}
+.load-fade-leave-active {
+  transition: opacity 0.6s ease;
+}
+.load-fade-leave-to { opacity: 0; }
+
 .exhibition-root { width: 100%; height: 100vh; position: relative; background: #000; overflow: hidden; }
 .exhibition-canvas { width: 100%; height: 100%; }
 .exhibition-hint { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; z-index: 10; }

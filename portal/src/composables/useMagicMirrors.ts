@@ -22,6 +22,7 @@ export interface MirrorObjects {
   rightHintRing: THREE.Group
   update: (delta: number, elapsed: number) => void
   dispose: () => void
+  loadPromise: Promise<void>
 }
 
 const HINT_BASE_Y = 4.9
@@ -194,6 +195,16 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
   scene.add(leftMirror)
 
   let disposed = false
+  let modelsLoaded = 0
+  const totalModels = 2
+  let resolveLoad: () => void
+  const loadPromise = new Promise<void>((resolve) => { resolveLoad = resolve })
+
+  function onModelLoaded() {
+    modelsLoaded++
+    if (modelsLoaded >= totalModels) resolveLoad()
+  }
+
   const gltfLoader = new GLTFLoader()
   gltfLoader.load(
     assetUrl('models/computer__desk.glb'),
@@ -232,10 +243,12 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
       })
 
       leftMirror.add(model)
+      onModelLoaded()
     },
     undefined,
     (err) => {
       console.warn('[MagicMirrors] Failed to load computer desk GLB:', err)
+      onModelLoaded()
     },
   )
 
@@ -295,6 +308,7 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
       })
 
       rightMirror.add(model)
+      onModelLoaded()
 
       // ----- 流程图动画：Clone 表面几何作为叠加层 -----
       let boardSurface: THREE.Mesh | null = null
@@ -360,6 +374,7 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
     undefined,
     (err) => {
       console.warn('[MagicMirrors] Failed to load white board GLB:', err)
+      onModelLoaded()
     },
   )
 
@@ -416,7 +431,7 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
     if (fcTexture) fcTexture.dispose()
   }
 
-  return { leftMirror, rightMirror, rightSurface, rightClickZone, rightHintRing, update, dispose }
+  return { leftMirror, rightMirror, rightSurface, rightClickZone, rightHintRing, update, dispose, loadPromise }
 }
 
 // ====== 工具函数 ======
