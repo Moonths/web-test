@@ -22,7 +22,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          export PNPM_HOME="/home/runner/setup-pnpm/node_modules/.bin"
+          pnpm config set pnpm.onlyBuiltDependencies '["esbuild","vue-demi"]' --location project
+          pnpm install --frozen-lockfile
 
       - name: Build portal (includes resume + dashboard sub-apps)
         run: pnpm build:portal
