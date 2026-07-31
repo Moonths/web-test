@@ -229,31 +229,36 @@ function createWall(
 
 function createWelcomeSign(scene: THREE.Scene, width: number, height: number, hd: number) {
   const canvas = document.createElement('canvas')
-  canvas.width = 1024
-  canvas.height = 256
+  canvas.width = 2048
+  canvas.height = 512
   const ctx = canvas.getContext('2d')!
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  // 半透明深色底衬
-  ctx.fillStyle = 'rgba(5, 5, 20, 0.7)'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-  ctx.font = 'bold 96px "JetBrains Mono","Courier New",monospace'
+  ctx.font = 'bold 160px "JetBrains Mono","Courier New",monospace'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
 
-  // 强辉光外层
-  ctx.shadowColor = 'rgba(129,140,248,0.9)'
-  ctx.shadowBlur = 30
-  ctx.fillStyle = '#A5B4FC'
+  // 最外层大面积光晕
+  ctx.shadowColor = 'rgba(129,140,248,0.4)'
+  ctx.shadowBlur = 80
+  ctx.fillStyle = 'rgba(165,180,252,0.6)'
   ctx.fillText('WELCOME', canvas.width / 2, canvas.height / 2)
-  // 更宽的辉光
-  ctx.shadowColor = 'rgba(199,210,254,0.6)'
-  ctx.shadowBlur = 60
+
+  // 中层辉光
+  ctx.shadowColor = 'rgba(199,210,254,0.7)'
+  ctx.shadowBlur = 40
+  ctx.fillStyle = 'rgba(199,210,254,0.75)'
   ctx.fillText('WELCOME', canvas.width / 2, canvas.height / 2)
-  // 内层高亮
-  ctx.shadowBlur = 0
+
+  // 文字主体亮色
+  ctx.shadowColor = 'rgba(224,231,255,0.9)'
+  ctx.shadowBlur = 15
   ctx.fillStyle = '#E0E7FF'
+  ctx.fillText('WELCOME', canvas.width / 2, canvas.height / 2)
+
+  // 文字核心高光
+  ctx.shadowBlur = 0
+  ctx.fillStyle = '#FFFFFF'
   ctx.fillText('WELCOME', canvas.width / 2, canvas.height / 2)
 
   const texture = new THREE.CanvasTexture(canvas)
@@ -261,7 +266,7 @@ function createWelcomeSign(scene: THREE.Scene, width: number, height: number, hd
   texture.magFilter = THREE.LinearFilter
   texture.premultiplyAlpha = true
 
-  const signW = 8
+  const signW = 12
   const signH = signW * (canvas.height / canvas.width)
   const signGeo = new THREE.PlaneGeometry(signW, signH)
   const signMat = new THREE.MeshBasicMaterial({
@@ -269,7 +274,7 @@ function createWelcomeSign(scene: THREE.Scene, width: number, height: number, hd
     side: THREE.DoubleSide,
   })
   const sign = new THREE.Mesh(signGeo, signMat)
-  sign.position.set(0, height - 1.5, hd - 0.02)
+  sign.position.set(0, height / 2 + 1, hd - 0.02)
   sign.rotation.y = Math.PI
   scene.add(sign)
   scene.userData.welcomeSign = sign
