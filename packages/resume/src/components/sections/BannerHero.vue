@@ -6,6 +6,7 @@ const typedCmd = ref('')
 const typedName = ref('')
 const typedTags = ref('')
 const showDesc = ref(false)
+const showFooter = ref(false)
 const pressedKey = ref<string | null>(null)
 let pressTimer: number | null = null
 
@@ -34,8 +35,8 @@ onMounted(() => {
   setTimeout(() => {
     typeText(typedCmd, fullCmd, 40, () => {
       setTimeout(() => typeText(typedName, fullName, 50, () => {
-        setTimeout(() => typeText(typedTags, fullTags, 30, () => {
-          setTimeout(() => { showDesc.value = true }, 150)
+        setTimeout(() => typeText(typedTags, fullTags, 15, () => {
+          setTimeout(() => { showDesc.value = true; setTimeout(() => { showFooter.value = true }, 800) }, 150)
         }), 100)
       }), 200)
     })
@@ -119,7 +120,7 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
                   10年+企业级与 AI 原生应用开发经验，擅长 Vue3 全家桶及 TypeScript 工程化体系建设。具备跨端开发能力（uni-app / 小程序），主导过集团级 ERP 与仓储管理等复杂后台系统，同时具备 NestJS BFF 层开发能力。
                 </p>
               </Transition>
-              <div v-if="showDesc" class="banner__terminal-footer">
+              <div v-if="showFooter" class="banner__terminal-footer">
                 <div class="banner__cmd-line banner__cmd-line--sm">
                   <span class="banner__prompt">➜</span>
                   <span class="banner__path">~/tech-stack</span>
