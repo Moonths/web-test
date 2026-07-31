@@ -348,7 +348,7 @@ onBeforeUnmount(() => {
     <Transition name="load-fade">
       <div v-if="!modelsLoaded" class="loading-screen">
         <div class="loading-content">
-          <div class="loading-logo">MK</div>
+          <div class="loading-logo">Maojike</div>
           <div class="loading-bar-track">
             <div class="loading-bar-fill" :style="{ width: loadingProgress + '%' }"></div>
           </div>
@@ -433,7 +433,7 @@ html, body, #app { width: 100%; height: 100%; overflow: hidden; background: #000
   50% { opacity: 0.4; }
 }
 .loading-bar-track {
-  width: 220px; height: 3px;
+  width: 260px; height: 3px;
   background: rgba(129,140,248,0.12);
   border-radius: 3px; overflow: hidden;
 }

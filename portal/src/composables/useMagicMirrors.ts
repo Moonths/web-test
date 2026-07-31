@@ -196,7 +196,7 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
 
   let disposed = false
   let modelsLoaded = 0
-  const totalModels = 2
+  const totalModels = 1  // 只等白板模型，电脑桌延后加载
   let resolveLoad: () => void
   const loadPromise = new Promise<void>((resolve) => { resolveLoad = resolve })
 
@@ -243,12 +243,10 @@ export function useMagicMirrors(state: HallSceneState): MirrorObjects {
       })
 
       leftMirror.add(model)
-      onModelLoaded()
     },
     undefined,
     (err) => {
       console.warn('[MagicMirrors] Failed to load computer desk GLB:', err)
-      onModelLoaded()
     },
   )
 
