@@ -6,10 +6,12 @@ const typedCmd = ref('')
 const typedName = ref('')
 const typedTags = ref('')
 const showDesc = ref(false)
+const pressedKey = ref('')
+let pressTimer: number | null = null
 
-const fullCmd = 'whoami'
+const fullCmd = 'Who Am I ?'
 const fullName = '毛际可'
-const fullTags = '微信小程序 · uni-app · mpvue'
+const fullTags = '微信小程序 · H5 · NodeJs · Vue3 · AI · uni-app · Echarts'
 
 // Typewriter effect
 let timers: number[] = []
@@ -30,14 +32,14 @@ function typeText(target: ReturnType<typeof ref<string>>, text: string, delay: n
 onMounted(() => {
   // Stagger the typewriter sequence
   setTimeout(() => {
-    typeText(typedCmd, fullCmd, 80, () => {
-      setTimeout(() => typeText(typedName, fullName, 100, () => {
-        setTimeout(() => typeText(typedTags, fullTags, 60, () => {
-          setTimeout(() => { showDesc.value = true }, 300)
-        }), 200)
-      }), 400)
+    typeText(typedCmd, fullCmd, 40, () => {
+      setTimeout(() => typeText(typedName, fullName, 50, () => {
+        setTimeout(() => typeText(typedTags, fullTags, 30, () => {
+          setTimeout(() => { showDesc.value = true }, 150)
+        }), 100)
+      }), 200)
     })
-  }, 600)
+  }, 300)
 
   // Banner scaling
   scaleBanner()
@@ -47,7 +49,14 @@ onMounted(() => {
 onUnmounted(() => {
   timers.forEach(clearInterval)
   window.removeEventListener('resize', scaleBanner)
+  if (pressTimer) clearTimeout(pressTimer)
 })
+
+function onKeyClick(label: string) {
+  pressedKey.value = label
+  if (pressTimer) clearTimeout(pressTimer)
+  pressTimer = window.setTimeout(() => { pressedKey.value = '' }, 300)
+}
 
 function scaleBanner() {
   if (!bannerRef.value) return
@@ -126,7 +135,11 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
               <div
                 v-else
                 class="banner__key"
-                :class="isKeyDef(key) && key.w ? `banner__key--${key.w}` : ''"
+                :class="[
+                  isKeyDef(key) && key.w ? `banner__key--${key.w}` : '',
+                  { 'banner__key--pressed': pressedKey === (isKeyDef(key) ? key.label : key) }
+                ]"
+                @click="onKeyClick(isKeyDef(key) ? key.label : key)"
               >{{ isKeyDef(key) ? key.label : key }}</div>
             </template>
           </div>
@@ -307,9 +320,9 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
 .banner__spacer { height: 8px; flex-shrink: 0; }
 
 .banner__desc {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-text-soft);
-  line-height: 22px;
+  line-height: 26px;
   font-family: var(--font-sans);
   max-width: 100%;
   margin: 0;
@@ -369,6 +382,16 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
     inset 0 0 6px rgba(99, 102, 241, 0.35),
     0 0 12px rgba(99, 102, 241, 0.15);
   transform: translateY(1px);
+}
+
+/* 按键弹起动效 */
+.banner__key--pressed {
+  animation: key-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes key-pop {
+  0% { transform: scale(1); background: #2A2A30; color: var(--color-text-muted); border-color: #3D3D44; }
+  30% { transform: scale(1.8); background: var(--color-accent); color: #fff; border-color: var(--color-accent); z-index: 10; position: relative; }
+  100% { transform: scale(1); background: #2A2A30; color: var(--color-text-muted); border-color: #3D3D44; }
 }
 
 .banner__key--w52  { width: 52px; }
