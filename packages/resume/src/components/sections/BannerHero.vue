@@ -57,8 +57,12 @@ function scaleBanner() {
   const naturalW = 1440
   const naturalH = 900
   const scale = Math.min(vw / naturalW, (vh - 80) / naturalH, 1)
-  const offsetX = (vw - naturalW * scale) / 2
-  el.style.transform = `scale(${scale})`
+  // 手机端保证最小缩放，避免内容过小无法阅读
+  const minScale = vw < 768 ? 0.42 : 0
+  const finalScale = Math.max(scale, minScale)
+  const offsetX = (vw - naturalW * finalScale) / 2
+  el.style.transform = `scale(${finalScale})`
+  el.style.transformOrigin = 'top left'
   el.style.left = offsetX + 'px'
 }
 
@@ -151,6 +155,13 @@ function isKeyDef(v: string | KeyDef | null): v is KeyDef { return v !== null &&
   display: flex;
   align-items: center;
   justify-content: center;
+}
+@media (max-width: 767px) {
+  .banner-hero {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .banner {
