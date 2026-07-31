@@ -21,7 +21,13 @@
     "dev:all": "pnpm --parallel --filter portal --filter @resume/resume --filter @resume/dashboard run dev"
   },
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=8"
+    "node": ">=22",
+    "pnpm": ">=11"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "vue-demi"
+    ]
   }
 }
