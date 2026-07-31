@@ -68,7 +68,11 @@ jobs:
           username: ${{ secrets.ECS_USER }}
           key: ${{ secrets.ECS_SSH_KEY }}
           script: |
+            set -e
             cd /var/www/resume-website
+
+            # 暂存本地改动，避免 git pull 被 abort
+            git stash push -m "auto-stash before CI deploy" -- backend/data/app.db backend/knowledge/resume.md || true
             git pull origin main
 
             # 更新 Nginx 配置（路径指向 portal/dist + 子应用路由）
