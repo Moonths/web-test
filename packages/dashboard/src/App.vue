@@ -129,7 +129,6 @@ function initCharts() {
       label: { color: '#94a3b8', fontSize: 10, fontFamily: '"JetBrains Mono", monospace' },
       nodeWidth: 14,
       nodeGap: 10,
-      nodeAlign: 'left',
     }],
   })
   chartInstances.push(sankey)
