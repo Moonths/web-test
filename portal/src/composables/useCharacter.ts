@@ -32,6 +32,10 @@ export function useCharacter(scene: THREE.Scene): CharacterController {
   group.position.set(0, 0, -2)
   scene.add(group)
 
+  // 加载完成 Promise
+  let resolveLoad: () => void
+  const loadPromise = new Promise<void>((resolve) => { resolveLoad = resolve })
+
   // 角色跟随光源
   const charLight = new THREE.PointLight('#fff8f0', 6, 10, 1.5)
   charLight.position.set(0, 1.5, 1)
