@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 const useDevMode = true
 
 export default defineConfig({
-  base: '/',
+  base: '/admin/',
   plugins: [
     vue(),
     qiankun('admin', { useDevMode }),

@@ -26,5 +26,11 @@ echo "Copying to $PORTAL_PUBLIC/dashboard/"
 mkdir -p "$PORTAL_PUBLIC/dashboard"
 cp -r dist/* "$PORTAL_PUBLIC/dashboard/"
 
+# 3. Build admin (deployed separately, NOT copied into portal)
+echo "--- Building @resume/admin ---"
+cd "$ROOT_DIR/packages/admin"
+pnpm run build
+echo "Admin dist ready at packages/admin/dist/"
+
 echo "=== Done: sub-apps ready in $PORTAL_PUBLIC ==="
 ls -la "$PORTAL_PUBLIC/resume/" "$PORTAL_PUBLIC/dashboard/"
